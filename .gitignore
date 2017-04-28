@@ -1,0 +1,7 @@
+*.pyc
+*~*
+*.o
+*.zip
+*.gz
+data/test/DOI/*
+data/train/DOI/*
