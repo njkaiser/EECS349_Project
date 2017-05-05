@@ -5,3 +5,4 @@
 *.gz
 data/test/DOI/*
 data/train/DOI/*
+data/DSB2017/*
