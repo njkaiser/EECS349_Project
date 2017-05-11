@@ -1,0 +1,47 @@
+On Tue, May 9, 2017 at 10:33 AM, Nicholas David <nicholasdavid2019@u.northwestern.edu> wrote:
+Great Job! Here is my peer review. Let me know if you have any questions.
+Group 2:
+How they could improve their write-up. Are any portions unclear, or underdeveloped? How should they alter their writing approach in their remaining project reports? (2 sentences)
+This was a very detailed write-up and it is clear that the authors are very interested and knowledgeable in the area. My main recommendations would be to discuss an issue I see arising with Processing capability, as processing what appears to be hundreds of GBs of images (according to the link) may be well beyond the capabilities of a computer, possibly look at things such as AWS.
+Whether you like their project idea, and pros and cons (2 sentences)
+This idea is very interesting, and relevant. Pros would be that this is a cutting edge topic that if done right could be a great diagnostic tool, the only con I could see is FDA regulation if you choose to eventually market this. Services such as 23andMe have struggled with that in the past in their attempts to use data.
+What advice you have for them in order to have a successful project by the end of the quarter (3 sentences)
+My advice to be successful with this is consider a wide variety of variables and to focus this initially as research. Additionally, you stated that medical professionals would be that ultimate measure of success, but we see that medical professionals are wrong from time to time. Finally, I would highly recommend researching the processing power needed to complete this.
+-Nick
+--
+Nick David
+Northwestern University, McCormick School of Engineering and Applied Science
+Treasurer Wildside
+
+
+======================================================================================
+
+
+On Tue, May 9, 2017 at 4:59 PM, Ryan Masson <ryanmasson2017@u.northwestern.edu> wrote:
+Hello Nate, Adam, and Chainatee. Here is my review for your project proposal:
+
+1. Your write-up is great. Best one I have read. Very clear and well written. If anything the pre-processing section is underdeveloped. You say the images come with “their labeled data separated into a text file.” What is this data and how will it help you?
+2. I love your project area. I think it’s exciting and it’s awesome you found this brand new dataset to work on. However, it will probably be quite difficulty to analyze image data as opposed to just tabulated data.
+3. I think you should get your raw data into a format that you can put in a learning algorithm ASAP. It will be good to get some quick feedback about how accurate you can hope to get by the end of the quarter. You mention possibly comparing to diagnoses made by medical personnel — look into data about the PSA test. I’m sure there are available statistics about the accuracy of this test. But beware, it has been prone to controversy about its real utility for patients. Good luck!
+
+
+======================================================================================
+
+
+On Tue, May 9, 2017 at 11:35 PM, Jared Fernandez <jaredfernandez2019@u.northwestern.edu> wrote:
+Hello,
+
+Here is my review of your EECS 349 Proposal:
+
+How they could improve their write-up. Are any portions unclear, or underdeveloped? How should they alter their writing approach in their remaining project reports? (2 sentences)
+The write-up could be improved by providing a title that summarizes the project. Additionally, the writeup can be improved by elaborating on the computer vision techniques that will be used to analyze the images’ features.
+
+Whether you like their project idea, and pros and cons (2 sentences)
+I am really interested by this project idea as it applies machine learning to a novel data set. The project idea would enable cheap detection of cancer, which could reduce healthcare costs and allow for earlier detection.
+
+What advice you have for them in order to have a successful project by the end of the quarter (3 sentences)
+As there are +309,000 images and only 346 patients, it can be assumed that there are many images for each individual patient. Assuming that images from a single patient will produce the same classification, this may result in redundant training data. Thus, I recommend normalizing the during pre-processing to prevent a large batch of images from a single patient from drowning out data from the other patients. This can be done by limiting the number of images from a single patient used in the training set.
+
+Thanks,
+
+Jared Fernandez
