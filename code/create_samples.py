@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+
 # from __future__ import print_function, division
 import os
 import SimpleITK as sitk
 import numpy as np
 import csv
 from glob import glob
-import pandas as pd
+# import pandas as pd
 from tqdm import tqdm # long waits are more fun with status bars!
 
 from matplotlib import pyplot as plt
@@ -21,7 +22,7 @@ from pprint import pprint
 import time
 
 # directories:
-workspace = "/home/njk/Desktop/for_the_last_time/"
+workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
 image_dir = workspace + "subset0/"
 output_dir = workspace + "output/"
 image_list = glob(image_dir + "*.mhd")
