@@ -6,4 +6,5 @@
 data/test/DOI/*
 data/train/DOI/*
 data/DSB2017/*
-data/LUNA2016/*
+data/LUNA2016/subset*
+data/LUNA2016/output*
