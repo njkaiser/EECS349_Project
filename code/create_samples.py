@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-# from __future__ import print_function, division
 import os
 import SimpleITK as sitk
 import numpy as np
 import csv
 from glob import glob
-# import pandas as pd
 from tqdm import tqdm # long waits are more fun with status bars!
 
 from matplotlib import pyplot as plt
@@ -29,6 +27,19 @@ image_list = glob(image_dir + "*.mhd")
 # pprint(image_list)
 
 
+class color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+
 class Nodule(object):
     def __init__(self, x, y, z, r):
         self.x = x
@@ -43,85 +54,76 @@ class Nodule(object):
         return "<x: " + str(self.x) + ", y: " + str(self.y) + ", z: " + str(self.z) + ", r: " + str(self.r) + ">"
 
 
-patient_data = dict()
-with open(workspace + "annotations.csv", mode='r') as labelfile:
-    reader = csv.reader(labelfile)
-    for uid, x, y, z, d in reader:
-        if uid == "seriesuid":
-            continue # skip header row
-        elif uid not in patient_data:
-            patient_data[uid] = [] # create empty list first time
-        patient_data[uid].append(Nodule(float(x), float(y), float(z), float(d)/2))
+def generate_positives(uid, slices, v_center, radius, spacing):
+    sz = 40
+    output = np.zeros([sz, sz]) # create sz x sz pixel output image
+    vz = v_center[2]
+    vx_min = v_center[0]-sz/2
+    vx_max = v_center[0]+sz/2-1
+    vy_min = v_center[1]-sz/2
+    vy_max = v_center[1]+sz/2+1
 
-# pprint(patient_data)
-# print patient_data["1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860"]
-
-
-
-for fname in image_list:
-    uid = os.path.splitext(os.path.basename(fname))[0]
-    if uid not in patient_data:
-        print "no data available for patient", uid
-        continue
-    else:
-        print patient_data[uid]
-        sitk_slices = sitk.ReadImage(fname)
-        origin = np.array(sitk_slices.GetOrigin())   # x, y, z of origin in world coordinates (mm)
-        spacing = np.array(sitk_slices.GetSpacing()) # spacing of voxels in world coordinates (mm)
-        slices = sitk.GetArrayFromImage(sitk_slices) # convert to numpy array
-        z_slice_count, height, width = slices.shape  # height x width constitute the transverse plane
-        print "img_array.shape:", slices.shape
-
-# BEGIN ANIMATION
-        # fig = plt.figure() # make figure
-        # img = plt.imshow(slices[0], cmap='gray')#, vmin=0, vmax=255)
-        #
-        # def updatefig(iii): # callback function for FuncAnimation()
-        #     img.set_array(slices[iii])
-        #     return [img]
-        #
-        # animation.FuncAnimation(fig, updatefig, frames=range(z_slice_count), interval=1, blit=True, repeat=False)
-        # fig.show()
-# END ANIMATION
-
-        for nodule in patient_data[uid]:
-            print nodule
+    n = int(radius/spacing[2]/2) # divide by 2 to ensure we get a slice of nodule
+    # print "number of slices:", 2*n+1
+    for slc in tqdm(slices[vz-n:vz+n, :, :]):
+        # remember, numpy indices are (z, y, x) order
+        # print "taking slice:", vz, str(vy_min) + ":" + str(vy_max), str(vx_min) + ":" +  str(vx_max)
+        output = slc[vy_min:vy_max, vx_min:vx_max]
+        plt.imshow(output, cmap='gray')
+        plt.show()
 
 
-        # for j in range(len(x)):
-        # for i, slc in enumerate(slices):
-        #     print i
-        #     img = plt.imshow(slc, cmap='gray')#, vmin=0, vmax=255)
-        #     # fig.draw()
-        #     fig.canvas.draw_idle()
-        #     time.sleep(0.02)
-        # fig.close()
+def main():
+    # load patient data from CSV file
+    patient_data = dict()
+    with open(workspace + "annotations.csv", mode='r') as labelfile:
+        reader = csv.reader(labelfile)
+        for uid, x, y, z, d in reader:
+            if uid == "seriesuid":
+                continue # skip header row
+            elif uid not in patient_data:
+                patient_data[uid] = [] # create empty list first time
+            patient_data[uid].append(Nodule(float(x), float(y), float(z), float(d)/2))
+    # pprint(patient_data)
+    # print patient_data["1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860"]
 
-        # for z in tqdm(range(z_slice_count)):
-#         for slc in slices:
-#             artists = func()
-#             im = plt.imshow(slices[z, :, :], animated=True)
-#             fig.canvas.draw_idle()
-#             plt.pause(interval)
-#
-# for d in frames:
-#    artists = func(d, *fargs)
+    # loop through files and create pos/neg train/test/validation samples:
+    for fname in image_list:
+        uid = os.path.splitext(os.path.basename(fname))[0]
+        if uid not in patient_data:
+            print color.RED + "patient " + uid + ": NO DATA AVAILABLE" + color.END
+            continue
+        else:
+            print color.BOLD + color.BLUE + "patient " + uid + color.END
+            sitk_slices = sitk.ReadImage(fname)
+            origin = np.array(sitk_slices.GetOrigin())   # x, y, z of origin (mm)
+            spacing = np.array(sitk_slices.GetSpacing()) # spacing of voxels (mm)
+            slices = sitk.GetArrayFromImage(sitk_slices) # convert sitk image to numpy array
+            num_slices, H, W = slices.shape # height x width in transverse plane
+            # print "img_array.shape:", slices.shape
+            # print "\tspacing:", spacing
 
+            ##### BEGIN ANIMATION
+            # fig = plt.figure() # make figure
+            # img = plt.imshow(slices[0], cmap='gray')#, vmin=0, vmax=255)
+            #
+            # def updatefig(iii): # callback function for FuncAnimation()
+            #     img.set_array(slices[iii])
+            #     return [img]
+            #
+            # animation.FuncAnimation(fig, updatefig, frames=range(num_slices), interval=1, blit=True, repeat=False)
+            # fig.show()
+            ##### END ANIMATION
 
-        # Animation function
-        # def animate(z):
-        #     t = slices[z,:,:]
-        #     img = plt.contourf(X, Y, t)
-        #     return img
-        #
-        # # ani = animation.ArtistAnimation(fig, ims, interval=50, blit=True, repeat_delay=1000)
-        # anim = animation.FuncAnimation(fig, animate, frames=range(z_slice_count))
-        #
-        # # plt.imshow(slices[z, :, :], cmap='gray')
-        # plt.show()
+            for nodule in patient_data[uid]:
+                # print nodule
+                m_center = np.array([nodule.x, nodule.y, nodule.z]) # location in mm
+                v_center = np.rint((m_center-origin)/spacing).astype(int) # location in voxels
+                # print "\tm_center:", m_center
+                # print "\tv_center:", v_center
+                generate_positives(uid, slices, v_center, nodule.r, spacing)
 
 
 
 if __name__ == '__main__':
-    # main()
-    pass
+    main()
