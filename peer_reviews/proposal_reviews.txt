@@ -45,3 +45,18 @@ As there are +309,000 images and only 346 patients, it can be assumed that there
 Thanks,
 
 Jared Fernandez
+
+
+======================================================================================
+
+
+On Thu, May 11, 2017 at 6:12 PM, Yunil Seo <yunilseo2016@u.northwestern.edu> wrote:
+Dear Nate,
+
+Here is the peer review for your proposal. I hope it helps!
+
+1.     They could improve their write up if they can tell us which criteria they will focus when processing the data (eg. similarities between cancer patients vs. non-cancer patients). They can also be clearer if they are more specific when they are writing such as how neural network can contribute to their studies.
+
+2.     I like their project idea for its practicality, as if we can successfully discern cancer from medical images, it will save tons of money for patients who cannot afford to take full medical check up. One downside is that projects like this one may already being widely studied, so it is bit uncreative.
+
+3.     The writer should be more specific about how their decision to use non-linear SVM or neural network is applicable to his project rather than simply stating “due to complexity”. Also, the writer should also be more explicit about what kind of attributes they plan on processing and perhaps include what image processors such as SIFT exactly do. Lastly, the writer should also include similar/relevant/previous works to their projects as reference for the future readers.
