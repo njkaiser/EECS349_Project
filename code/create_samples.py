@@ -68,6 +68,8 @@ def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classi
 
     if classification == "pos":
         n = int(radius/spacing[2]/2) # divide by 2 -safety factor so we don't go beyond bounds of nodule
+        if n < 1:
+            n = 1
         vz_start = vz-n
         vz_end = vz+n
     else:
@@ -79,51 +81,9 @@ def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classi
         # remember, numpy indices are (z, y, x) order
         # print "taking slice:", vz, str(vy_min) + ":" + str(vy_max), str(vx_min) + ":" +  str(vx_max)
         output = slc[vy_min:vy_max, vx_min:vx_max]
-
         imsave(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', output)
-
-
-        # fig = plt.figure()
-        # # ax = fig.add_subplot(1,1,1)
-        # # plt.axis('off')
-        plt.imshow(output, cmap='gray')
-        # # # plt.tick_params(axis='both', left='off', top='off', right='off', bottom='off', labelleft='off', labeltop='off', labelright='off', labelbottom='off')
-        # # extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-        # # plt.savefig(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', bbox_inches=extent)
-        # SaveFigureAsImage(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', fig)
-
-        # fig = plt.figure(frameon=False)
-        # fig.set_size_inches(1,1)
-        #
-        # ax = plt.Axes(fig, [0., 0., 1., 1.])
-        # ax.set_axis_off()
-        # fig.add_axes(ax)
-        #
-        # ax.imshow(output, cmap='gray')
-        # fig.savefig(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', dpi=sz)
-        # im = Image.fromarray(output, 'LA')
-        # im.save(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png')
-        # im.show()
-        # fig = plt.figure()
-        # ax = plt.Axes(fig, [0., 0., 1., 1.])
-        # plt.axis('off')
-        # plt.tick_params(axis='both', left='off', top='off', right='off', bottom='off', labelleft='off', labeltop='off', labelright='off', labelbottom='off')
-        #
-        # ax.set_axis_off()
-        #
-        # # axes = fig.add_subplot(1,1,1)
-        # # axes.plot(xs, ys)
-        #
-        # # This should be called after all axes have been added
         # plt.imshow(output, cmap='gray')
-        # fig.tight_layout(pad=0)
-        # fig.savefig(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png')
-        # # plt.savefig(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', bbox_inches=None, pad_inches=0)
-        plt.show()
-        # savefig(fname, dpi=None, facecolor='w', edgecolor='w',
-        # orientation='portrait', papertype=None, format=None,
-        # transparent=False, bbox_inches=None, pad_inches=0.1,
-        # frameon=None)
+        # plt.show()
 ##### END OF FUNCTION generate_sample()
 
 
