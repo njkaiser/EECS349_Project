@@ -26,7 +26,7 @@ from scipy.misc import imsave
 
 # directories:
 workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-image_dir = workspace + "subset0/"
+image_dir = workspace + "subset1/"
 output_dir = workspace + "output/"
 image_list = glob(image_dir + "*.mhd")
 # pprint(image_list)
@@ -139,7 +139,7 @@ def main():
                 generate_sample(uid, slices, i, v_center, nodule.r, spacing, "pos")
 
             ##### create NEGATIVE samples:
-            # v_center = 0
+            v_center = 0
             for i in range(len(patient_data[uid])):
                 # discard outermost strips of image, where there's no lung:
                 xmin = int(W/6)
