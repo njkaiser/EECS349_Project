@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+''' main function for project - invoked by tensorflow to call all auxiliary functions '''
 
 import numpy as np
 import tensorflow as tf

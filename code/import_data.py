@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-''' converts individual png files to mini-batched tensor for use by tensorflow '''
+''' converts individual png files to 4D image tensor for input into tensorflow '''
 
 import os
 import numpy as np
@@ -7,49 +7,30 @@ import cv2
 # print "OpenCV Version:", cv2.__version__
 import tensorflow as tf
 from pprint import pprint
-# from tensorflow.contrib import learn
-# from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_fn_lib
-# tf.logging.set_verbosity(tf.logging.INFO)
 from glob import glob
 
 
-# directories:
+##### DIRECTORIES:
 workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
 image_dir = workspace + "output/"
 image_list = glob(image_dir + "*.png")
-# print num_images
-# pprint(imt i, filename
 
 
-##### USEFUL CONSTANTS:
-IMAGE_SIZE = 40 # input image width / height (must be square)
+##### CONSTANTS:
+IMAGE_SIZE = 40 # image width / height (must be square)
 NUM_IMAGES = len(image_list)
 NUM_CLASSES = 2 # binary classification
 BATCH_SIZE = 128 # size of the subset of examples to use when performing gradient descent during training
-# IMAGE_WIDTH = 32 # example image width
-# IMAGE_HEIGHT = 32 # example image height
-# CHANNELS = 1 # 0 = same as PNG, 1 = grayscale
-# DTYPE = tf.uint8 # [optional]: tf.uint8 or tf.uint16
-# NAME = 'NATEISTHEBEST' # [optional]: name to identify the operation
-NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
-NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
+# NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
+# NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
 
-##### BASIC MODEL PARAMETERS:
+##### TENSORFLOW MODEL PARAMETERS:
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to process in a batch""")
 # tf.app.flags.DEFINE_string('image_dir', '/tmp/cifar10_data', """path to image data""")
 # tf.app.flags.DEFINE_boolean('use_fp16', False, """Train the model using fp16.""")
 
-
-
-# TODO: IMPORT:
-# tf.image.decode_png(
-#     contents,
-#     channels=CHANNELS,
-#     dtype=DTYPE,
-#     name=NAME
-# )
 
 def import_data():
     images = np.zeros((NUM_IMAGES, IMAGE_SIZE, IMAGE_SIZE, 1))
@@ -82,6 +63,18 @@ def import_data():
             assert False
 
     return images, labels
+
+
+
+
+
+# TODO: IMPORT:
+# tf.image.decode_png(
+#     contents,
+#     channels=CHANNELS,
+#     dtype=DTYPE,
+#     name=NAME
+# )
 
     # # if not eval_data:
     # # filenames = [os.path.join(image_dir, 'data_batch_%d.bin' % i) for i in xrange(1, 6)]
@@ -148,4 +141,5 @@ def import_data():
 
 
 if __name__ == '__main__':
-    tf.app.run()
+    print "WARNING: this file should be invoked by tensorflow, not standalone"
+    import_data()
