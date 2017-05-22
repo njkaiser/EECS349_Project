@@ -23,6 +23,7 @@ import random
 random.seed(99)
 from PIL import Image
 from scipy.misc import imsave
+from config import IMAGE_SIZE
 
 # directories:
 workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
@@ -58,13 +59,13 @@ class Nodule(object):
 
 
 def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classification):
-    sz = 40
-    output = np.zeros([sz, sz]) # create sz x sz pixel output image
+    # sz = 40
+    output = np.zeros([IMAGE_SIZE, IMAGE_SIZE]) # create N x N pixel output image
     vz = v_center[2]
-    vx_min = v_center[0]-sz/2
-    vx_max = v_center[0]+sz/2
-    vy_min = v_center[1]-sz/2
-    vy_max = v_center[1]+sz/2
+    vx_min = v_center[0]-IMAGE_SIZE/2
+    vx_max = v_center[0]+IMAGE_SIZE/2
+    vy_min = v_center[1]-IMAGE_SIZE/2
+    vy_max = v_center[1]+IMAGE_SIZE/2
 
     if classification == "pos":
         n = int(radius/spacing[2]/2) # divide by 2 -safety factor so we don't go beyond bounds of nodule

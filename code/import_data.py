@@ -3,24 +3,26 @@
 
 import os
 import numpy as np
-import cv2
+# import cv2
 # print "OpenCV Version:", cv2.__version__
+from scipy import misc
+
 import tensorflow as tf
 from pprint import pprint
+from config import IMAGE_SIZE, NUM_CHANNELS, NUM_CLASSES, NUM_TRAIN_EXAMPLES, NUM_VALIDATION_EXAMPLES, NUM_TEST_EXAMPLES
 from glob import glob
 
+import matplotlib.pyplot as plt
 
 ##### DIRECTORIES:
 workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-image_dir = workspace + "output/"
-image_list = glob(image_dir + "*.png")
+example_image_dir = workspace + "output/"
+image_list = glob(example_image_dir + "*.png")
 
 
 ##### CONSTANTS:
-IMAGE_SIZE = 40 # image width / height (must be square)
+BATCH_SIZE = 64 # size of the subset of examples to use when performing gradient descent during training
 NUM_IMAGES = len(image_list)
-NUM_CLASSES = 2 # binary classification
-BATCH_SIZE = 128 # size of the subset of examples to use when performing gradient descent during training
 # NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
 # NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
@@ -28,41 +30,119 @@ BATCH_SIZE = 128 # size of the subset of examples to use when performing gradien
 ##### TENSORFLOW MODEL PARAMETERS:
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to process in a batch""")
-# tf.app.flags.DEFINE_string('image_dir', '/tmp/cifar10_data', """path to image data""")
+# tf.app.flags.DEFINE_string('example_image_dir', '/tmp/cifar10_data', """path to image data""")
 # tf.app.flags.DEFINE_boolean('use_fp16', False, """Train the model using fp16.""")
 
 
 def import_data():
-    images = np.zeros((NUM_IMAGES, IMAGE_SIZE, IMAGE_SIZE, 1))
-    labels = np.zeros((NUM_IMAGES, NUM_CLASSES))
+    images = np.zeros((NUM_IMAGES, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
+    labels = np.zeros((NUM_IMAGES, NUM_CLASSES), dtype=np.float32)
 
     for i, filename in enumerate(image_list):
         # print i, filename
         # import image and convert to numpy array of proper size:
-        image = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        image = image.astype(float)
-        image = 1 - image/255
+        # image = tf.image.decode_png(filename, channels=3, dtype=tf.uint8, name=None)
+        # image = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+        image = misc.imread(filename)
+        # print image.shape
+        # print type(image)
+        # print type(image[0][0])
+        # image = image.astype(np.float32)
+        # print type(image[0][0])
+
+
+        # img_tf = tf.Variable(image)
+        # # print img_tf.get_shape().as_list()
+        #
+        # init = tf.global_variables_initializer()
+        # sess = tf.Session()
+        # sess.run(init)
+        # im = sess.run(img_tf)
+
+        # fig = plt.figure()
+        # fig.add_subplot(1,2,1)
+        # plt.imshow(im)
+        # fig.add_subplot(1,2,2)
+        # plt.imshow(image)
+        # plt.show()
+        # assert False
+
+
+
+
+        image = image.astype(np.float32)
+        image = 1 - image/255 # convert pixels from range [0, 255] [0.0, 1.0]
+
         # image.reshape((IMAGE_SIZE, IMAGE_SIZE, 1))
         # image = image[:, :, np.newaxis] # reshape isn't working for this?
-        images[i] = image.reshape((IMAGE_SIZE, IMAGE_SIZE, 1))
+        # image.reshape((IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS))
+        image = image[:, :, np.newaxis] # reshape isn't working how I want
+        # print "shape1:", image.shape
+        # print "type1:", type(image[0][0][0])
+        # image.reshape((IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)).astype(np.float32)
+        # image = image.astype(np.float32)
+        # print "shape2:", image.shape
+        # print "type2:", type(image[0][0][0])
+
+        # tf.image.convert_image_dtype(image, tf.float32, saturate=True, name=None)
+        # tf.image.convert_image_dtype(image.reshape((IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)), tf.float32, saturate=True, name=None)
+        # image = tf.cast(image.reshape((IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)), tf.float32)
+        # tf.reshape(image, [IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS])
+        # print tf.shape(image)
+        # images[i] = tf.cast(image.reshape((IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)), tf.float32)
+
+        # print "image  type:", type(image[0][0][0])
+        images[i] = image
+        # print "images type:", type(images[i][0][0][0])
+        # images[i] = image[:, :, np.newaxis]
         # print image.shape
         # print image
-        # print image.max()
-        # print image.min()
+        # print "image.max():", image.msax(), "image.min()", image.min()
 
         # import labels and assign to correct classification:
         classification = filename[-7:-4]
         if classification == 'pos':
-            labels[i] = np.array([1, 0]).reshape((1, 2))
+            labels[i] = np.array([1]).reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         elif classification == 'neg':
-            labels[i] = np.array([0, 1]).reshape((1, 2))
+            labels[i] = np.array([0]).reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         else:
             print "ERROR: classification cannot be determined from filename:", filename
             assert False
 
-    return images, labels
+    # zero-center data over entire dataset (ONLY FOR TRAINING SET, subtract same mean value for test/validation sets)
+    # print "images.max():", images.max(), "images.min()", images.min()
+    # print "average pixel value:", np.mean(images)
+    # print "images.shape:", images.shape
+
+    # print "type1:", type(images[0][0][0][0])
+    images -= np.mean(images[0:NUM_TRAIN_EXAMPLES, :, :, :])
+    # print "type2:", type(images[0][0][0][0])
+    print "np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :]) =", np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :])
+    # print "type3:", type(images[0][0][0][0])
+    # print "after subtraction: images.max():", images.max(), "images.min()", images.min()
+
+    # split image data into train, validation, and test sets:
+    idx1 = NUM_TRAIN_EXAMPLES
+    idx2 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES
+    idx3 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES + NUM_TEST_EXAMPLES
+
+    train_data = images[0:idx1, :, :, :]
+    validation_data = images[idx1:idx2, :, :, :]
+    test_data = images[idx2:idx3, :, :, :]
+
+    train_labels = labels[0:idx1]
+    validation_labels = labels[idx1:idx2]
+    test_labels = labels[idx2:idx3]
+    # print "type3:", type(train_data[0][0][0][0])
+
+    # print "train, validation, and test data {{{ label }}} shapes:"
+    # print train_data.shape, "{{{", train_labels.shape, "}}}"
+    # print validation_data.shape, "{{{", validation_labels.shape, "}}}"
+    # print test_data.shape, "{{{", test_labels.shape, "}}}"
+
+    return train_data, validation_data, test_data, train_labels, validation_labels, test_labels
 
 
 

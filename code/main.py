@@ -3,11 +3,13 @@
 
 import numpy as np
 import tensorflow as tf
-# from tensorflow.contrib import learn
-# from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_fn_lib
+from tensorflow.contrib import learn
+from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_fn_lib
 # tf.logging.set_verbosity(tf.logging.INFO)
 from import_data import import_data
+from model import build_model
 # from pprint import pprint
+# from config import
 
 
 # Variables must be initialized by running an `init` Op after having
@@ -23,17 +25,16 @@ def main(argv):
         sess.run(init_op)
 
 
-        # STEP 2: BUILD MODEL(S)
-        # from model import build_model
-        # model = build_model()
+        # STEP 2: GRAB 4D TENSOR DATA FOR TRAINING, VALIDATION, AND TESTING
+        train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
+        # print validation_data
+        # print validation_labels
+
+
+        # STEP 3: BUILD MODEL(S)
+        train_model = build_model(train_data, train_labels, learn.ModeKeys.TRAIN)
         # TODO:
-            # do we actually need to build 2 models? 1 for train and 1 for test?
-
-
-        # STEP 3: IMPORT IMAGE DATA AS 4D TENSOR
-        data, labels = import_data()
-        # print data
-        print labels
+            # do we actually need to build 2 models? 1 for train and 1 for test? What about validate?
 
 
         # STEP 4: TRAIN
