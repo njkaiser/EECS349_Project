@@ -51,6 +51,7 @@ def build_model(input_data, input_labels, mode):
     logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
     print "SHAPE logits =", logits.get_shape()
 
+
     loss = None
     train_op = None
     # calculate loss (for both TRAIN and EVAL modes)
