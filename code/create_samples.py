@@ -23,12 +23,12 @@ import random
 random.seed(99)
 from PIL import Image
 from scipy.misc import imsave
+from config import IMAGE_SIZE, DATA_DIR, INPUT_IMAGE_DIR, JPEG_IMAGE_DIR
 
 # directories:
-workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-image_dir = workspace + "subset1/"
-output_dir = workspace + "output/"
-image_list = glob(image_dir + "*.mhd")
+# workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
+# image_dir = workspace + "subset1/"
+# output_dir = workspace + "output/"
 # pprint(image_list)
 
 
@@ -58,13 +58,13 @@ class Nodule(object):
 
 
 def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classification):
-    sz = 40
-    output = np.zeros([sz, sz]) # create sz x sz pixel output image
+    # sz = 40
+    output = np.zeros([IMAGE_SIZE, IMAGE_SIZE]) # create N x N pixel output image
     vz = v_center[2]
-    vx_min = v_center[0]-sz/2
-    vx_max = v_center[0]+sz/2
-    vy_min = v_center[1]-sz/2
-    vy_max = v_center[1]+sz/2
+    vx_min = v_center[0]-IMAGE_SIZE/2
+    vx_max = v_center[0]+IMAGE_SIZE/2
+    vy_min = v_center[1]-IMAGE_SIZE/2
+    vy_max = v_center[1]+IMAGE_SIZE/2
 
     if classification == "pos":
         n = int(radius/spacing[2]/2) # divide by 2 -safety factor so we don't go beyond bounds of nodule
@@ -81,16 +81,17 @@ def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classi
         # remember, numpy indices are (z, y, x) order
         # print "taking slice:", vz, str(vy_min) + ":" + str(vy_max), str(vx_min) + ":" +  str(vx_max)
         output = slc[vy_min:vy_max, vx_min:vx_max]
-        imsave(output_dir + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', output)
+        imsave(JPEG_IMAGE_DIR + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', output)
         # plt.imshow(output, cmap='gray')
         # plt.show()
 ##### END OF FUNCTION generate_sample()
 
 
 def main():
-    ##### load patient data from CSV file
+    ##### load input images from subset directory and their labels from CSV
+    image_list = glob(INPUT_IMAGE_DIR + "*.mhd")
     patient_data = dict()
-    with open(workspace + "annotations.csv", mode='r') as labelfile:
+    with open(DATA_DIR + "annotations.csv", mode='r') as labelfile:
         reader = csv.reader(labelfile)
         for uid, x, y, z, d in reader:
             if uid == "seriesuid":
