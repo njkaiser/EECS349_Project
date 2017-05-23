@@ -11,13 +11,13 @@ JPEG_IMAGE_DIR = DATA_DIR + "images/"
 MODEL_SAVE_DIR = WORKSPACE + "models/"
 
 
-##### CONSTANTS:
+##### IMAGE DATA CONSTANTS:
 IMAGE_SIZE = 40 # image width / height (must be square)
 NUM_CHANNELS = 1 # grayscale = 1, RGB = 3
 NUM_CLASSES = 2 # binary classification, easier to set up model with 2 instead of 1
 
 
-##### TRAINING CONSTANTS
+##### TRAINING CONSTANTS:
 NUM_TRAIN_EXAMPLES = 99
 NUM_VALIDATION_EXAMPLES = 11
 NUM_TEST_EXAMPLES = 22

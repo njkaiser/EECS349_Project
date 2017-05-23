@@ -38,7 +38,8 @@ def build_model(input_data, input_labels, mode):
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=POOL2_FILTER_SIZE, strides=POOL2_STRIDE)
     print "SHAPE pool2 =", pool2.get_shape()
 
-    pool2_flat = tf.reshape(pool2, [input_data.shape[0], -1])
+    p2s = pool2.get_shape().as_list()
+    pool2_flat = tf.reshape(pool2, [-1, p2s[1] * p2s[2] * CONV2_NUM_FILTERS])
     print "SHAPE pool2_flat =", pool2_flat.get_shape()
 
     dense = tf.layers.dense(inputs=pool2_flat, units=FC1_NUM_NEURONS, activation=FC1_ACTIV_FUNC)
