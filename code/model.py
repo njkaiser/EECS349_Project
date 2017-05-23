@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import print_function
+# from __future__ import print_function
 
 import numpy as np
 import tensorflow as tf
@@ -15,6 +15,7 @@ from config import CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_AC
 
 
 def build_model(input_data, input_labels, mode):
+    print "SHAPE input =", input_data.shape
 
     conv1 = tf.layers.conv2d(
         inputs=input_data,
@@ -22,8 +23,10 @@ def build_model(input_data, input_labels, mode):
         kernel_size=CONV1_KERNEL_SIZE,
         padding=CONV1_PADDING,
         activation=CONV1_ACTIV_FUNC)
+    print "SHAPE conv1 =", conv1.get_shape()
 
     pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=POOL1_FILTER_SIZE, strides=POOL1_STRIDE)
+    print "SHAPE pool1 =", pool1.get_shape()
 
     conv2 = tf.layers.conv2d(
         inputs=pool1,
@@ -31,20 +34,27 @@ def build_model(input_data, input_labels, mode):
         kernel_size=CONV2_KERNEL_SIZE,
         padding=CONV2_PADDING,
         activation=CONV2_ACTIV_FUNC)
+    print "SHAPE conv2 =", conv2.get_shape()
 
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=POOL2_FILTER_SIZE, strides=POOL2_STRIDE)
+    print "SHAPE pool2 =", pool2.get_shape()
 
-    pool2_flat = tf.reshape(pool2, [BATCH_SIZE, -1])
+    pool2_flat = tf.reshape(pool2, [input_data.shape[0], -1])
+    print "SHAPE pool2_flat =", pool2_flat.get_shape()
 
     dense = tf.layers.dense(inputs=pool2_flat, units=FC1_NUM_NEURONS, activation=FC1_ACTIV_FUNC)
+    print "SHAPE dense =", dense.get_shape()
 
     dropout = tf.layers.dropout(inputs=dense, rate=DROPOUT_RATE, training=mode == learn.ModeKeys.TRAIN)
+    print "SHAPE dropout =", dropout.get_shape()
 
     # output (Logits) layer
-    output = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
+    # output = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
+    # print "SHAPE output =", output.get_shape()
 
     # # Logits layer
-    # logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
+    logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
+    print "SHAPE logits =", logits.get_shape()
 
     loss = None
     train_op = None
@@ -52,7 +62,9 @@ def build_model(input_data, input_labels, mode):
     if mode != learn.ModeKeys.INFER:
         # onehot_labels = tf.one_hot(indices=tf.cast(input_labels, tf.int32), depth=NUM_CLASSES)
         onehot_labels = tf.one_hot(indices=input_labels, depth=NUM_CLASSES)
-        loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=output)
+        print "SHAPE onehot_labels =", onehot_labels.get_shape()
+
+        loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=logits)
 
     # Configure the Training Op (for TRAIN mode)
     if mode == learn.ModeKeys.TRAIN:
@@ -65,9 +77,9 @@ def build_model(input_data, input_labels, mode):
     # Generate Predictions
     predictions = {
         "classes": tf.argmax(
-        input=output, axis=1),
+        input=logits, axis=1),
         "probabilities": tf.nn.softmax(
-        output, name="softmax_tensor")
+        logits, name="softmax_tensor")
         }
 
     # Return a ModelFnOps object

@@ -36,7 +36,9 @@ tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to pro
 
 def import_data():
     images = np.zeros((NUM_IMAGES, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
-    labels = np.zeros((NUM_IMAGES, NUM_CLASSES), dtype=np.float32)
+    # labels = np.zeros((NUM_IMAGES, NUM_CLASSES), dtype=np.float32)
+    labels = np.zeros(NUM_IMAGES, dtype=np.float32)
+    print "ORIGINAL LABELS SHAPE:", labels.shape
 
     for i, filename in enumerate(image_list):
         # print i, filename
@@ -102,10 +104,12 @@ def import_data():
         # import labels and assign to correct classification:
         classification = filename[-7:-4]
         if classification == 'pos':
-            labels[i] = np.array([1]).reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
+            labels[i] = 1.0
+            # labels[i] = np.array([1.0, 0.0])#.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         elif classification == 'neg':
-            labels[i] = np.array([0]).reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
+            labels[i] = 0.0
+            # labels[i] = np.array([0.0, 1.0])#.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         else:
             print "ERROR: classification cannot be determined from filename:", filename
@@ -141,6 +145,7 @@ def import_data():
     # print train_data.shape, "{{{", train_labels.shape, "}}}"
     # print validation_data.shape, "{{{", validation_labels.shape, "}}}"
     # print test_data.shape, "{{{", test_labels.shape, "}}}"
+    print "FINAL LABELS SHAPE:", labels.shape
 
     return train_data, validation_data, test_data, train_labels, validation_labels, test_labels
 
