@@ -2,28 +2,29 @@
 
 import tensorflow as tf
 
+
 ##### DIRECTORIES:
-# workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-# image_dir = workspace + "subset1/"
-# output_dir = workspace + "output/"
-# image_list = glob(image_dir + "*.mhd")
-# pprint(image_list)
+WORKSPACE = "/home/njk/Courses/EECS349/Project/"
+DATA_DIR = WORKSPACE + "data/LUNA2016/"
+INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
+JPEG_IMAGE_DIR = DATA_DIR + "images/"
+MODEL_SAVE_DIR = WORKSPACE + "models/"
 
 
 ##### CONSTANTS:
 IMAGE_SIZE = 40 # image width / height (must be square)
 NUM_CHANNELS = 1 # grayscale = 1, RGB = 3
-NUM_CLASSES = 2 # binary classification
+NUM_CLASSES = 2 # binary classification, easier to set up model with 2 instead of 1
 
 
+##### TRAINING CONSTANTS
 NUM_TRAIN_EXAMPLES = 99
 NUM_VALIDATION_EXAMPLES = 11
 NUM_TEST_EXAMPLES = 22
-
-BATCH_SIZE = 64 # size of the subset of examples to use when performing gradient descent during training
-# NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
-# NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
+BATCH_SIZE = 10
 DROPOUT_RATE = 0.35
+NUM_ITERS=100
+
 
 ##### NETWORK ARCHITECTURE:
 CONV1_NUM_FILTERS = 32
@@ -40,6 +41,13 @@ POOL2_FILTER_SIZE = [2, 2]
 POOL2_STRIDE = 2
 FC1_NUM_NEURONS = 1024
 FC1_ACTIV_FUNC = tf.nn.relu
+
+
+##### TENSORFLOW FLAGS AND VARIABLES:
+FLAGS = tf.app.flags.FLAGS
+tf.logging.set_verbosity(tf.logging.INFO)
+tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to process in a batch""")
+FLAGS.model_dir = MODEL_SAVE_DIR
 
 
 if __name__ == '__main__':

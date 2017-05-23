@@ -3,41 +3,20 @@
 
 import os
 import numpy as np
-# import cv2
-# print "OpenCV Version:", cv2.__version__
 from scipy import misc
-
+import matplotlib.pyplot as plt
 import tensorflow as tf
-from pprint import pprint
-from config import IMAGE_SIZE, NUM_CHANNELS, NUM_CLASSES, NUM_TRAIN_EXAMPLES, NUM_VALIDATION_EXAMPLES, NUM_TEST_EXAMPLES
 from glob import glob
 
-import matplotlib.pyplot as plt
-
-##### DIRECTORIES:
-workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-example_image_dir = workspace + "output/"
-image_list = glob(example_image_dir + "*.png")
-
-
-##### CONSTANTS:
-BATCH_SIZE = 64 # size of the subset of examples to use when performing gradient descent during training
-NUM_IMAGES = len(image_list)
-# NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
-# NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
-
-
-##### TENSORFLOW MODEL PARAMETERS:
-FLAGS = tf.app.flags.FLAGS
-tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to process in a batch""")
-# tf.app.flags.DEFINE_string('example_image_dir', '/tmp/cifar10_data', """path to image data""")
-# tf.app.flags.DEFINE_boolean('use_fp16', False, """Train the model using fp16.""")
+from config import IMAGE_SIZE, NUM_CHANNELS, NUM_CLASSES, NUM_TRAIN_EXAMPLES, NUM_VALIDATION_EXAMPLES, NUM_TEST_EXAMPLES, BATCH_SIZE, DATA_DIR, JPEG_IMAGE_DIR
 
 
 def import_data():
-    images = np.zeros((NUM_IMAGES, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
-    # labels = np.zeros((NUM_IMAGES, NUM_CLASSES), dtype=np.float32)
-    labels = np.zeros(NUM_IMAGES, dtype=np.float32)
+    image_list = glob(JPEG_IMAGE_DIR + "*.png")
+    num_images = len(image_list)
+    images = np.zeros((num_images, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
+    # labels = np.zeros((num_images, NUM_CLASSES), dtype=np.float32)
+    labels = np.zeros(num_images, dtype=np.float32)
     print "ORIGINAL LABELS SHAPE:", labels.shape
 
     for i, filename in enumerate(image_list):

@@ -3,13 +3,12 @@
 
 from __future__ import absolute_import
 from __future__ import division
-# from __future__ import print_function
 
 import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import learn
 from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_fn_lib
-tf.logging.set_verbosity(tf.logging.INFO)
+
 from config import CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, NUM_CLASSES, BATCH_SIZE, DROPOUT_RATE
 
 
@@ -48,25 +47,19 @@ def build_model(input_data, input_labels, mode):
     dropout = tf.layers.dropout(inputs=dense, rate=DROPOUT_RATE, training=mode == learn.ModeKeys.TRAIN)
     print "SHAPE dropout =", dropout.get_shape()
 
-    # output (Logits) layer
-    # output = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
-    # print "SHAPE output =", output.get_shape()
-
-    # # Logits layer
     logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
     print "SHAPE logits =", logits.get_shape()
 
     loss = None
     train_op = None
-    # Calculate Loss (for both TRAIN and EVAL modes)
+    # calculate loss (for both TRAIN and EVAL modes)
     if mode != learn.ModeKeys.INFER:
-        # onehot_labels = tf.one_hot(indices=tf.cast(input_labels, tf.int32), depth=NUM_CLASSES)
         onehot_labels = tf.one_hot(indices=input_labels, depth=NUM_CLASSES)
         print "SHAPE onehot_labels =", onehot_labels.get_shape()
 
         loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=logits)
 
-    # Configure the Training Op (for TRAIN mode)
+    # configure training op (for TRAIN mode)
     if mode == learn.ModeKeys.TRAIN:
         train_op = tf.contrib.layers.optimize_loss(
         loss=loss,
@@ -74,7 +67,7 @@ def build_model(input_data, input_labels, mode):
         learning_rate=0.001,
         optimizer="SGD")
 
-    # Generate Predictions
+    # generate predictions
     predictions = {
         "classes": tf.argmax(
         input=logits, axis=1),
@@ -82,7 +75,7 @@ def build_model(input_data, input_labels, mode):
         logits, name="softmax_tensor")
         }
 
-    # Return a ModelFnOps object
+    # return a ModelFnOps object
     return model_fn_lib.ModelFnOps(mode=mode, predictions=predictions, loss=loss, train_op=train_op)
 
 
