@@ -46,7 +46,7 @@ def main(argv):
 
 
         ##### STEP 4: TRAIN
-        train_classifier = learn.SKCompat(learn.Estimator(model_fn=build_model, model_dir=MODEL_SAVE_DIR))
+        train_classifier = learn.Estimator(model_fn=build_model, model_dir=MODEL_SAVE_DIR)
 
         # train_model.fit(input_fn=build_model, steps=200)
         # results = train_model.evaluate(input_fn=build_model, steps=1)
@@ -59,24 +59,25 @@ def main(argv):
 
         # train_model.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=51, monitors=[logging_hook])
 
-        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=51, monitors=[logging_hook])
+        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[logging_hook])
         #
         # train_model.train(build_model, hooks=None, steps=NUM_ITERS, max_steps=None)
         # TODO:
             # make sure we train for a period, pause, and test on validation
 
-# Train the model
-# mnist_classifier.fit(
-#     x=train_data,
-#     y=train_labels,
-#     batch_size=100,
-#     steps=20000,
-#     monitors=[logging_hook])
-
-
         ##### STEP 5: TEST
         # Configure the accuracy metric for evaluation
-        # metrics = {"accuracy": learn.MetricSpec( metric_fn=tf.metrics.accuracy, prediction_key="classes"), }
+        metrics = {
+            "accuracy":
+                learn.MetricSpec(
+                    metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+        }
+
+        # Evaluate the model and print results
+        eval_results = train_classifier.evaluate(
+          x=test_data, y=test_labels, metrics=metrics)
+        print(eval_results)
+
         #
         # test_results = mnist_classifier.evaluate(x=test_data, y=test_labels, metrics=metrics)
         #
