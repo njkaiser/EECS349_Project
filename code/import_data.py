@@ -16,7 +16,7 @@ def import_data():
     num_images = len(image_list)
     images = np.zeros((num_images, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
     # labels = np.zeros((num_images, NUM_CLASSES), dtype=np.float32)
-    labels = np.zeros(num_images, dtype=np.float32)
+    labels = np.zeros(num_images, dtype=np.int32)
     print "ORIGINAL LABELS SHAPE:", labels.shape
 
     for i, filename in enumerate(image_list):
