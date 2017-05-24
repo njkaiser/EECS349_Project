@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+''' parameters - much easier to manage all parameters from one file '''
 
 import tensorflow as tf
 
 
 ##### DIRECTORIES:
-WORKSPACE = "/Users/Adam/github/EECS349_Project/"
+# WORKSPACE = "/Users/Adam/github/EECS349_Project/"
+WORKSPACE = "/home/njk/Courses/EECS349/Project/"
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"

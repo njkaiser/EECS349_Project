@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-''' Sets up and creates a tensorflow neural network structure '''
+''' sets up and creates a tensorflow CNN structure using tf layers '''
 
 from __future__ import absolute_import
 from __future__ import division
@@ -50,7 +50,6 @@ def build_model(input_data, input_labels, mode):
 
     logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
     print "SHAPE logits =", logits.get_shape()
-
 
     loss = None
     train_op = None
