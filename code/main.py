@@ -8,7 +8,7 @@ from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_f
 from import_data import import_data
 from model import build_model
 
-from config import FLAGS, BATCH_SIZE, NUM_ITERS, MODEL_SAVE_DIR
+from config import FLAGS, BATCH_SIZE, NUM_ITERS, MODEL_SAVE_DIR, WORKSPACE
 
 
 # Variables must be initialized by running an `init` Op after having
@@ -21,6 +21,9 @@ CONFIG = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 
 def main(argv):
     with tf.Session(config=CONFIG) as sess:
+        train_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'train/', sess.graph)
+        valid_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'valid/', sess.graph)
+
 
         ##### STEP 1: INITIALIZE ALL NECESSARY TENSORFLOW VARIABLES
         sess.run(init_op)
@@ -44,6 +47,21 @@ def main(argv):
         tensors_to_log = {"probabilities": "softmax_tensor"}
         logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=50)
 
+        validation_metrics = {
+            "accuracy":
+                learn.MetricSpec(
+                    metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+        }
+
+        validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
+        validation_data,
+        validation_labels,
+        every_n_steps=50,
+        metrics=validation_metrics,
+        early_stopping_metric="loss",
+        early_stopping_metric_minimize=True,
+        early_stopping_rounds=200)
+
 
         ##### STEP 4: TRAIN
         train_classifier = learn.Estimator(model_fn=build_model, model_dir=MODEL_SAVE_DIR)
@@ -59,7 +77,8 @@ def main(argv):
 
         # train_model.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=51, monitors=[logging_hook])
 
-        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[logging_hook])
+        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[validation_monitor])
+
         #
         # train_model.train(build_model, hooks=None, steps=NUM_ITERS, max_steps=None)
         # TODO:
