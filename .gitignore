@@ -9,6 +9,6 @@ data/train/DOI/*
 data/DSB2017/*
 data/LUNA2016/subset*
 data/LUNA2016/output/*
-data/LUNA2016/images/*
+#data/LUNA2016/images/*
 data/LUNA2016/output_small/*
 
