@@ -12,3 +12,5 @@ data/LUNA2016/output/*
 #data/LUNA2016/images/*
 data/LUNA2016/output_small/*
 models/*
+tensorboard_log/*
+

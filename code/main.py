@@ -11,95 +11,55 @@ from model import build_model
 from config import FLAGS, BATCH_SIZE, NUM_ITERS, MODEL_SAVE_DIR, WORKSPACE
 
 
-# Variables must be initialized by running an `init` Op after having
-# launched the graph. We first have to add the `init` Op to the graph.
-init_op = tf.global_variables_initializer()
-CONFIG = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
-# TODO: ADD ANY OTHER NECESARY TF VARIABLES HERE
-# tf.logging.set_verbosity(tf.logging.INFO)
-
-
 def main(argv):
-    with tf.Session(config=CONFIG) as sess:
-        train_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'train/', sess.graph)
-        valid_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'valid/', sess.graph)
+    with tf.Session() as sess:
 
 
         ##### STEP 1: INITIALIZE ALL NECESSARY TENSORFLOW VARIABLES
+        init_op = tf.global_variables_initializer()
+        train_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'train/', sess.graph)
+        valid_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'valid/', sess.graph)
+        # TODO: ADD ANY OTHER NECESSARY TF STUFF HERE
         sess.run(init_op)
 
 
         ##### STEP 2: GRAB 4D TENSOR DATA FOR TRAINING, VALIDATION, AND TESTING
         train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
-        # print validation_data
-        # print validation_labels
 
 
-        ##### STEP 3: BUILD MODEL(S)
-        # train_model = build_model(train_data, train_labels, learn.ModeKeys.TRAIN)
-        # saver = tf.train.Saver()
-        # saver.save(sess, MODEL_SAVE_DIR + '/test.chkp')
-        # TODO:
-            # do we actually need to build 2 models? 1 for train and 1 for test? What about validate?
-
-        # Set up logging for predictions
-        # Log the values in the "Softmax" tensor with label "probabilities"
+        ##### STEP 3: SET UP LOGGING
+        # set up logging for predictions
         tensors_to_log = {"probabilities": "softmax_tensor"}
         logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=50)
 
         validation_metrics = {
-            "accuracy":
-                learn.MetricSpec(
-                    metric_fn=tf.metrics.accuracy, prediction_key="classes"),
-        }
+            "accuracy": learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+            }
 
         validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
-        validation_data,
-        validation_labels,
-        every_n_steps=10,
-        metrics=validation_metrics,
-        early_stopping_metric="loss",
-        early_stopping_metric_minimize=True,
-        early_stopping_rounds=200)
+            validation_data,
+            validation_labels,
+            every_n_steps=50,
+            metrics=validation_metrics,
+            early_stopping_metric="loss",
+            early_stopping_metric_minimize=True,
+            early_stopping_rounds=200)
 
         ##### STEP 4: TRAIN
         train_classifier = learn.Estimator(model_fn=build_model, model_dir=MODEL_SAVE_DIR)
 
-        # train_model.fit(input_fn=build_model, steps=200)
-        # results = train_model.evaluate(input_fn=build_model, steps=1)
-        # for key in sorted(results):
-        #     print("%s: %s" % (key, results[key]))
+        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[validation_monitor])
 
-        # print type(train_data)
-        # print type(train_labels)
-        # print type([logging_hook])
-
-        # train_model.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=51, monitors=[logging_hook])
-
-        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[logging_hook, validation_monitor])
-
-        #
-        # train_model.train(build_model, hooks=None, steps=NUM_ITERS, max_steps=None)
-        # TODO:
-            # make sure we train for a period, pause, and test on validation
 
         ##### STEP 5: TEST
         # Configure the accuracy metric for evaluation
         metrics = {
-            "accuracy":
-                learn.MetricSpec(
-                    metric_fn=tf.metrics.accuracy, prediction_key="classes"),
-        }
+            "accuracy": learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+            }
 
         # Evaluate the model and print results
-        eval_results = train_classifier.evaluate(
-          x=test_data, y=test_labels, metrics=metrics)
+        eval_results = train_classifier.evaluate(x=test_data, y=test_labels, metrics=metrics)
         print(eval_results)
-
-        #
-        # test_results = mnist_classifier.evaluate(x=test_data, y=test_labels, metrics=metrics)
-        #
-        # print(test_results)
         # TODO:
             # final test run against test data
             # export data to file and run any processing scripts we want to write

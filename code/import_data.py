@@ -17,7 +17,7 @@ def import_data():
     images = np.zeros((num_images, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
     # labels = np.zeros((num_images, NUM_CLASSES), dtype=np.float32)
     labels = np.zeros(num_images, dtype=np.int32)
-    print "ORIGINAL LABELS SHAPE:", labels.shape
+    # print "ORIGINAL LABELS SHAPE:", labels.shape
 
     for i, filename in enumerate(image_list):
         # print i, filename
@@ -102,7 +102,7 @@ def import_data():
     # print "type1:", type(images[0][0][0][0])
     images -= np.mean(images[0:NUM_TRAIN_EXAMPLES, :, :, :])
     # print "type2:", type(images[0][0][0][0])
-    print "np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :]) =", np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :])
+    # print "np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :]) =", np.std(images[0:NUM_TRAIN_EXAMPLES, :, :, :])
     # print "type3:", type(images[0][0][0][0])
     # print "after subtraction: images.max():", images.max(), "images.min()", images.min()
 
@@ -124,7 +124,7 @@ def import_data():
     # print train_data.shape, "{{{", train_labels.shape, "}}}"
     # print validation_data.shape, "{{{", validation_labels.shape, "}}}"
     # print test_data.shape, "{{{", test_labels.shape, "}}}"
-    print "FINAL LABELS SHAPE:", labels.shape
+    # print "FINAL LABELS SHAPE:", labels.shape
 
     return train_data, validation_data, test_data, train_labels, validation_labels, test_labels
 

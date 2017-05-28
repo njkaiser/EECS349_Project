@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+''' creates 40 x 40 pixel png files of positive/negative examples from raw data '''
 
 import os
 import SimpleITK as sitk

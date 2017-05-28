@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-''' Sets up and creates a tensorflow neural network structure '''
+''' sets up and creates a tensorflow CNN structure using tf layers '''
 
 from __future__ import absolute_import
 from __future__ import division
@@ -9,12 +9,14 @@ import tensorflow as tf
 from tensorflow.contrib import learn
 from tensorflow.contrib.learn.python.learn.estimators import model_fn as model_fn_lib
 
-from config import CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, NUM_CLASSES, BATCH_SIZE, DROPOUT_RATE
+from config import CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, NUM_CLASSES, BATCH_SIZE, DROPOUT_RATE, NUM_CHANNELS
 
 
 
 def build_model(input_data, input_labels, mode):
     print "SHAPE input =", input_data.shape
+
+    tf.summary.image("1: before conv1", input_data[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     conv1 = tf.layers.conv2d(
         inputs=input_data,
@@ -24,8 +26,12 @@ def build_model(input_data, input_labels, mode):
         activation=CONV1_ACTIV_FUNC)
     print "SHAPE conv1 =", conv1.get_shape()
 
+    tf.summary.image("2: after conv1", conv1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+
     pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=POOL1_FILTER_SIZE, strides=POOL1_STRIDE)
     print "SHAPE pool1 =", pool1.get_shape()
+
+    tf.summary.image("3: after pool1", pool1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     conv2 = tf.layers.conv2d(
         inputs=pool1,
@@ -35,8 +41,12 @@ def build_model(input_data, input_labels, mode):
         activation=CONV2_ACTIV_FUNC)
     print "SHAPE conv2 =", conv2.get_shape()
 
+    tf.summary.image("4: after conv2", conv2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=POOL2_FILTER_SIZE, strides=POOL2_STRIDE)
     print "SHAPE pool2 =", pool2.get_shape()
+
+    tf.summary.image("5: after pool2", pool2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     p2s = pool2.get_shape().as_list()
     pool2_flat = tf.reshape(pool2, [-1, p2s[1] * p2s[2] * CONV2_NUM_FILTERS])
@@ -50,7 +60,6 @@ def build_model(input_data, input_labels, mode):
 
     logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
     print "SHAPE logits =", logits.get_shape()
-
 
     loss = None
     train_op = None
