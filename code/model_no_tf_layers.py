@@ -102,21 +102,24 @@ sess.run(tf.global_variables_initializer())
 tf.summary.scalar("accuracy", accuracy)
 tf.summary.scalar("cross_entropy", cross_entropy)
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter('logs/train', sess.graph)
-validation_writer = tf.summary.FileWriter('logs/validation', sess.graph)
+train_writer = tf.summary.FileWriter('log_tmp/train', sess.graph)
+validation_writer = tf.summary.FileWriter('log_tmp/validation', sess.graph)
 
 saver = tf.train.Saver()
 
 # for i in range(1):
 for i in range(20000):
+    # If you want to run from a previous model, do so here:
+    # saver.restore(sess, "models/model1/test.ckpt")
+
+    # TODO: Figure out batch training
     # batch = [train_data[i:i+50], train_labels[i:i+50]]
-    # batch = mnist.train.next_batch(50)
 
     if i % 10 == 0:
         summary, acc = sess.run([merged, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})
         validation_writer.add_summary(summary, i)
         print("step %d, validation accuracy %g"%(i, acc))
-        save_path = saver.save(sess, "models/test.ckpt")
+        save_path = saver.save(sess, "model_tmp/test.ckpt")
         print("Save #%d to path: "%(i), save_path)
     summary, _ = sess.run([merged, train_step], feed_dict={x: train_data, y_: train_labels, keep_prob: DROPOUT_RATE})
     train_writer.add_summary(summary, i)
@@ -131,5 +134,5 @@ print("biases:", sess.run(b_fc2))
 
 saver = tf.train.Saver()
 
-save_path = saver.save(sess, "models/test.ckpt")
+save_path = saver.save(sess, "model_tmp/test.ckpt")
 print("Save to path: ", save_path)
