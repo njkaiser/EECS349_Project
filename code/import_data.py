@@ -113,8 +113,8 @@ def import_data():
     idx2 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES
     idx3 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES + NUM_TEST_EXAMPLES
 
-    print "CHECKING",labels[0].shape
-    print "CHECKING2",labels[0]
+    # print "CHECKING",labels[0].shape
+    # print "CHECKING2",labels[0]
 
     train_data = images[0:idx1, :, :, :]
     validation_data = images[idx1:idx2, :, :, :]
@@ -130,6 +130,10 @@ def import_data():
     # print validation_data.shape, "{{{", validation_labels.shape, "}}}"
     # print test_data.shape, "{{{", test_labels.shape, "}}}"
     # print "FINAL LABELS SHAPE:", labels.shape
+    # print "train_data:\n", train_data
+    # print "validation_data:\n", validation_data
+    # print "test_data:\n", test_data
+    # assert False
 
     return train_data, validation_data, test_data, train_labels, validation_labels, test_labels
 

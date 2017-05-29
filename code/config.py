@@ -2,16 +2,25 @@
 ''' parameters - much easier to manage all parameters from one file '''
 
 import tensorflow as tf
+import os
 
 
 ##### DIRECTORIES:
-WORKSPACE = "home/chainatee/Spring/349_Machine_Learning/git_repo/EECS349_Project/"
+WORKSPACE = str(os.getcwd()) + '/'
+# WORKSPACE = "home/chainatee/Spring/349_Machine_Learning/git_repo/EECS349_Project/"
 # WORKSPACE = "/Users/Adam/github/EECS349_Project/"
 # WORKSPACE = "/home/njk/Courses/EECS349/Project/"
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
 MODEL_SAVE_DIR = WORKSPACE + "models/"
+
+if not os.path.isdir(DATA_DIR) or \
+    not os.path.isdir(INPUT_IMAGE_DIR) or \
+    not os.path.isdir(JPEG_IMAGE_DIR) or \
+    not os.path.isdir(MODEL_SAVE_DIR):
+    print "Expected directory structure does not exist - are you running from the root of the workspace?"
+    exit(-1)
 
 
 ##### IMAGE DATA CONSTANTS:
