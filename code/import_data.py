@@ -15,8 +15,8 @@ def import_data():
     image_list = glob(JPEG_IMAGE_DIR + "*.png")
     num_images = len(image_list)
     images = np.zeros((num_images, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS), dtype=np.float32)
-    # labels = np.zeros((num_images, NUM_CLASSES), dtype=np.float32)
-    labels = np.zeros(num_images, dtype=np.int32)
+    labels = np.zeros((num_images, NUM_CLASSES), dtype=np.float32)
+    # labels = np.zeros(num_images, dtype=np.int32)
     # print "ORIGINAL LABELS SHAPE:", labels.shape
 
     for i, filename in enumerate(image_list):
@@ -83,12 +83,14 @@ def import_data():
         # import labels and assign to correct classification:
         classification = filename[-7:-4]
         if classification == 'pos':
-            labels[i] = 1.0
-            # labels[i] = np.array([1.0, 0.0])#.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
+            # labels[i] = 1.0
+            labels[i] = np.array([1.0, 0.0])
+            #.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         elif classification == 'neg':
-            labels[i] = 0.0
-            # labels[i] = np.array([0.0, 1.0])#.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
+            # labels[i] = 0.0
+            labels[i] = np.array([0.0, 1.0])
+            #.reshape((NUM_CLASSES, NUM_CHANNELS)) # not necessary, but ensures we know where the error is if we ever change NUM_CLASSES or NUM_CHANNELS
             # print labels[i].shape
         else:
             print "ERROR: classification cannot be determined from filename:", filename
@@ -110,6 +112,9 @@ def import_data():
     idx1 = NUM_TRAIN_EXAMPLES
     idx2 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES
     idx3 = NUM_TRAIN_EXAMPLES + NUM_VALIDATION_EXAMPLES + NUM_TEST_EXAMPLES
+
+    print "CHECKING",labels[0].shape
+    print "CHECKING2",labels[0]
 
     train_data = images[0:idx1, :, :, :]
     validation_data = images[idx1:idx2, :, :, :]

@@ -10,15 +10,13 @@ from model import build_model
 
 from config import FLAGS, BATCH_SIZE, NUM_ITERS, MODEL_SAVE_DIR, WORKSPACE
 
-
 def main(argv):
     with tf.Session() as sess:
 
-
         ##### STEP 1: INITIALIZE ALL NECESSARY TENSORFLOW VARIABLES
         init_op = tf.global_variables_initializer()
-        train_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'train/', sess.graph)
-        valid_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'valid/', sess.graph)
+        # train_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'train/', sess.graph)
+        # valid_writer = tf.summary.FileWriter(WORKSPACE + 'tensorboard_log/' + 'valid/', sess.graph)
         # TODO: ADD ANY OTHER NECESSARY TF STUFF HERE
         sess.run(init_op)
 
@@ -32,23 +30,23 @@ def main(argv):
         tensors_to_log = {"probabilities": "softmax_tensor"}
         logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=50)
 
-        validation_metrics = {
-            "accuracy": learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
-            }
-
-        validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
-            validation_data,
-            validation_labels,
-            every_n_steps=50,
-            metrics=validation_metrics,
-            early_stopping_metric="loss",
-            early_stopping_metric_minimize=True,
-            early_stopping_rounds=200)
-
+        # validation_metrics = {
+        #     "accuracy": learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+        #     }
+        #
+        # validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
+        #     validation_data,
+        #     validation_labels,
+        #     every_n_steps=50,
+        #     metrics=validation_metrics,
+        #     early_stopping_metric="loss",
+        #     early_stopping_metric_minimize=True,
+        #     early_stopping_rounds=200)
 
         ##### STEP 4: TRAIN
         train_classifier = learn.Estimator(model_fn=build_model, model_dir=MODEL_SAVE_DIR)
-        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[validation_monitor])
+
+        train_classifier.fit(x=train_data, y=train_labels, batch_size=BATCH_SIZE, steps=NUM_ITERS, monitors=[logging_hook])
 
 
         ##### STEP 5: TEST
@@ -63,7 +61,6 @@ def main(argv):
         # TODO:
             # final test run against test data
             # export data to file and run any processing scripts we want to write
-
 
 if __name__ == '__main__':
     tf.app.run()

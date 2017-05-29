@@ -5,8 +5,8 @@ import tensorflow as tf
 
 
 ##### DIRECTORIES:
-# WORKSPACE = "/Users/Adam/github/EECS349_Project/"
-WORKSPACE = "/home/njk/Courses/EECS349/Project/"
+WORKSPACE = "/Users/Adam/github/EECS349_Project/"
+# WORKSPACE = "/home/njk/Courses/EECS349/Project/"
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
@@ -25,7 +25,7 @@ NUM_VALIDATION_EXAMPLES = 100
 NUM_TEST_EXAMPLES = 100
 BATCH_SIZE = 10
 DROPOUT_RATE = 0.35
-NUM_ITERS = 100
+NUM_ITERS = 600
 
 
 ##### NETWORK ARCHITECTURE:

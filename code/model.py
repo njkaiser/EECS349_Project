@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 
 import numpy as np
 import tensorflow as tf
@@ -14,9 +15,9 @@ from config import CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_AC
 
 
 def build_model(input_data, input_labels, mode):
-    print "SHAPE input =", input_data.shape
+    # print "SHAPE input =", input_data.shape
 
-    tf.summary.image("1: before conv1", input_data[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+    tf.summary.image("1_before_conv1", input_data[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     conv1 = tf.layers.conv2d(
         inputs=input_data,
@@ -24,14 +25,14 @@ def build_model(input_data, input_labels, mode):
         kernel_size=CONV1_KERNEL_SIZE,
         padding=CONV1_PADDING,
         activation=CONV1_ACTIV_FUNC)
-    print "SHAPE conv1 =", conv1.get_shape()
+    # print "SHAPE conv1 =", conv1.get_shape()
 
-    tf.summary.image("2: after conv1", conv1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+    tf.summary.image("2_after_conv1", conv1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=POOL1_FILTER_SIZE, strides=POOL1_STRIDE)
-    print "SHAPE pool1 =", pool1.get_shape()
+    # print "SHAPE pool1 =", pool1.get_shape()
 
-    tf.summary.image("3: after pool1", pool1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+    tf.summary.image("3_after_pool1", pool1[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     conv2 = tf.layers.conv2d(
         inputs=pool1,
@@ -39,34 +40,34 @@ def build_model(input_data, input_labels, mode):
         kernel_size=CONV2_KERNEL_SIZE,
         padding=CONV2_PADDING,
         activation=CONV2_ACTIV_FUNC)
-    print "SHAPE conv2 =", conv2.get_shape()
+    # print "SHAPE conv2 =", conv2.get_shape()
 
-    tf.summary.image("4: after conv2", conv2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+    tf.summary.image("4_after_conv2", conv2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=POOL2_FILTER_SIZE, strides=POOL2_STRIDE)
-    print "SHAPE pool2 =", pool2.get_shape()
+    # print "SHAPE pool2 =", pool2.get_shape()
 
-    tf.summary.image("5: after pool2", pool2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
+    tf.summary.image("5_after_pool2", pool2[0:1, :, :, 0:1], max_outputs=NUM_CHANNELS, collections=None)
 
     p2s = pool2.get_shape().as_list()
     pool2_flat = tf.reshape(pool2, [-1, p2s[1] * p2s[2] * CONV2_NUM_FILTERS])
-    print "SHAPE pool2_flat =", pool2_flat.get_shape()
+    # print "SHAPE pool2_flat =", pool2_flat.get_shape()
 
     dense = tf.layers.dense(inputs=pool2_flat, units=FC1_NUM_NEURONS, activation=FC1_ACTIV_FUNC)
-    print "SHAPE dense =", dense.get_shape()
+    # print "SHAPE dense =", dense.get_shape()
 
     dropout = tf.layers.dropout(inputs=dense, rate=DROPOUT_RATE, training=mode == learn.ModeKeys.TRAIN)
-    print "SHAPE dropout =", dropout.get_shape()
+    # print "SHAPE dropout =", dropout.get_shape()
 
     logits = tf.layers.dense(inputs=dropout, units=NUM_CLASSES)
-    print "SHAPE logits =", logits.get_shape()
+    # print "SHAPE logits =", logits.get_shape()
 
     loss = None
     train_op = None
     # calculate loss (for both TRAIN and EVAL modes)
     if mode != learn.ModeKeys.INFER:
         onehot_labels = tf.one_hot(indices=input_labels, depth=NUM_CLASSES)
-        print "SHAPE onehot_labels =", onehot_labels.get_shape()
+        # print "SHAPE onehot_labels =", onehot_labels.get_shape()
 
         loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=logits)
 
