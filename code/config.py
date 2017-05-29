@@ -13,7 +13,22 @@ WORKSPACE = str(os.getcwd()) + '/'
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
-MODEL_SAVE_DIR = WORKSPACE + "models/"
+
+MODEL_SAVE_DIR = WORKSPACE + "model_tmp/"
+TRAINING_LOG_DIR = WORKSPACE + "log_tmp/train"
+VALIDATION_LOG_DIR = WORKSPACE + "log_tmp/validation"
+
+MODEL_NAME = "[INSERT MODEL NAME HERE]"
+
+print "WORKSPACE:",WORKSPACE
+print "MODEL_NAME:",MODEL_NAME
+
+if not os.path.exists(MODEL_SAVE_DIR):
+    os.makedirs(MODEL_SAVE_DIR)
+if not os.path.exists(TRAINING_LOG_DIR):
+    os.makedirs(TRAINING_LOG_DIR)
+if not os.path.exists(VALIDATION_LOG_DIR):
+    os.makedirs(VALIDATION_LOG_DIR)
 
 if not os.path.isdir(DATA_DIR) or \
     not os.path.isdir(INPUT_IMAGE_DIR) or \
