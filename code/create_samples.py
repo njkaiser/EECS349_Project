@@ -26,11 +26,6 @@ from PIL import Image
 from scipy.misc import imsave
 from config import IMAGE_SIZE, DATA_DIR, INPUT_IMAGE_DIR, JPEG_IMAGE_DIR
 
-# directories:
-# workspace = "/home/njk/Courses/EECS349/Project/data/LUNA2016/"
-# image_dir = workspace + "subset1/"
-# output_dir = workspace + "output/"
-# pprint(image_list)
 
 
 class color:
@@ -59,7 +54,6 @@ class Nodule(object):
 
 
 def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classification):
-    # sz = 40
     output = np.zeros([IMAGE_SIZE, IMAGE_SIZE]) # create N x N pixel output image
     vz = v_center[2]
     vx_min = v_center[0]-IMAGE_SIZE/2
@@ -67,16 +61,11 @@ def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classi
     vy_min = v_center[1]-IMAGE_SIZE/2
     vy_max = v_center[1]+IMAGE_SIZE/2
 
-    if classification == "pos":
-        n = int(radius/spacing[2]/2) # divide by 2 -safety factor so we don't go beyond bounds of nodule
-        if n < 1:
-            n = 1
-        vz_start = vz-n
-        vz_end = vz+n
-    else:
+    n = int(radius/spacing[2]/2) # divide by 2 -safety factor so we don't go beyond bounds of nodule
+    if n < 1:
         n = 1
-        vz_start = vz
-        vz_end = vz+1
+    vz_start = vz-n
+    vz_end = vz+n
     print "number of slices:", 2*n-1
     for i, slc in enumerate(slices[vz_start:vz_end, :, :]):
         # remember, numpy indices are (z, y, x) order
@@ -85,6 +74,7 @@ def generate_sample(uid, slices, nodule_index, v_center, radius, spacing, classi
         imsave(JPEG_IMAGE_DIR + uid + 'nod' + str(nodule_index) + 'slc' + str(i) + classification + '.png', output)
         # plt.imshow(output, cmap='gray')
         # plt.show()
+    return 2*n+1
 ##### END OF FUNCTION generate_sample()
 
 
@@ -100,8 +90,7 @@ def main():
             elif uid not in patient_data:
                 patient_data[uid] = [] # create empty list first time
             patient_data[uid].append(Nodule(float(x), float(y), float(z), float(d)/2))
-    # pprint(patient_data)
-    # print patient_data["1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860"]
+
 
     ##### loop through files and create pos/neg train/test/validation samples:
     for fname in image_list:
@@ -116,8 +105,6 @@ def main():
             spacing = np.array(sitk_slices.GetSpacing()) # spacing of voxels (mm)
             slices = sitk.GetArrayFromImage(sitk_slices) # convert sitk image to numpy array
             num_slices, H, W = slices.shape # height x width in transverse plane
-            # print "img_array.shape:", slices.shape
-            # print "\tspacing:", spacing
 
             ##### BEGIN ANIMATION
             # fig = plt.figure() # make figure
@@ -132,18 +119,18 @@ def main():
             ##### END ANIMATION
 
             ##### create POSITIVE samples:
+            nod_sizes = []
             for i, nodule in enumerate(patient_data[uid]):
-                # print nodule
                 m_center = np.array([nodule.x, nodule.y, nodule.z]) # location in mm
                 v_center = np.rint((m_center-origin)/spacing).astype(int) # location in voxels
-                # print "\tm_center:", m_center
-                # print "\tv_center:", v_center
                 generate_sample(uid, slices, i, v_center, nodule.r, spacing, "pos")
+                nod_sizes.append(nodule.r)
 
             ##### create NEGATIVE samples:
             v_center = 0
-            for i in range(len(patient_data[uid])):
-                # discard outermost strips of image, where there's no lung:
+            print "nod_sizes:", nod_sizes
+            for i, fake_nod_size in enumerate(nod_sizes):
+                # discard outermost edges of image, where there's no lung:
                 xmin = int(W/6)
                 xmax = W-int(W/6)
                 ymin = int(H/6)
@@ -163,7 +150,6 @@ def main():
                     min_dist = 80 # pixels, but beware x/y and z are different
                     for nodule in patient_data[uid]:
                         dist = math.sqrt((x-nodule.x)**2 + (y-nodule.y)**2 + (z-nodule.z)**2)
-                        # print "looping through nodules, checking distance =", dist
                         if dist < min_dist:
                             # print "too close, recalculating random center"
                             break
@@ -172,7 +158,7 @@ def main():
                         break
 
                 # generate the negative sample image and save:
-                generate_sample(uid, slices, 1, v_center, 0, spacing, "neg")
+                generate_sample(uid, slices, i, v_center, fake_nod_size, spacing, "neg")
 
 
 
