@@ -1,20 +1,21 @@
 import tensorflow as tf
-import cv2
 import numpy as np
-import os
 from import_data import import_data
 
-from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE
+from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE, NUM_ITERS
 
 train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
 
 train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1] * train_data.shape[2]))
 validation_data = np.reshape(validation_data, (validation_data.shape[0], validation_data.shape[1] * validation_data.shape[2]))
+test_data = np.reshape(test_data, (test_data.shape[0], test_data.shape[1] * test_data.shape[2]))
 
 print "Train Data Size", train_data.shape
 print "Train Labels Size", train_labels.shape
 print "Validation Data Size", validation_data.shape
 print "Validation Labels Size", validation_labels.shape
+print "Test Data Size", test_data.shape
+print "Test Labels Size", test_labels.shape
 
 sess = tf.InteractiveSession()
 
@@ -77,6 +78,7 @@ b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
 h_pool2_flat = tf.reshape(h_pool2, [-1, p2s[1]*p2s[2]*CONV2_NUM_FILTERS])
 h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
+
 # dropout
 # to reduce overfitting, we apply dropout before the readout layer
 keep_prob = tf.placeholder(tf.float32)
@@ -98,7 +100,6 @@ cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_
 train_step = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-sess.run(tf.global_variables_initializer())
 
 tf.summary.scalar("accuracy", accuracy)
 tf.summary.scalar("cross_entropy", cross_entropy)
@@ -108,8 +109,10 @@ validation_writer = tf.summary.FileWriter(VALIDATION_LOG_DIR, sess.graph)
 
 saver = tf.train.Saver()
 
-# for i in range(1):
-for i in range(20000):
+sess.run(tf.global_variables_initializer())
+
+
+for i in range(NUM_ITERS):
     # If you want to run from a previous model, do so here:
     # saver.restore(sess, "models/model_1/test.ckpt")
 
