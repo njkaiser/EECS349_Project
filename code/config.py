@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 
 
-MODEL_NAME = "model_6"
+MODEL_NAME = "model_7"
 
 
 ##### DIRECTORIES:
@@ -44,11 +44,11 @@ NUM_CLASSES = 2 # binary classification, easier to set up model with 2 instead o
 
 
 ##### TRAINING CONSTANTS:
-NUM_TRAIN_EXAMPLES = 600
-NUM_VALIDATION_EXAMPLES = 100
-NUM_TEST_EXAMPLES = 100
-BATCH_SIZE = 10
-NUM_ITERS = 600
+NUM_TRAIN_EXAMPLES = 2064
+NUM_VALIDATION_EXAMPLES = 442
+NUM_TEST_EXAMPLES = 442
+BATCH_SIZE = 516
+NUM_ITERS = 1000
 
 
 ##### HYPERPARAMETERS

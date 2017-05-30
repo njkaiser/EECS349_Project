@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from import_data import import_data
 
-from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE, NUM_ITERS
+from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE, NUM_ITERS, BATCH_SIZE
 
 train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
 
@@ -62,24 +62,37 @@ h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
 
 # second convolutional layer
 # 64 features for each 5x5 patch
-W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
-b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
+# W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
+# b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
+#
+# tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
 
-tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
+## 2 SETS OF LAYERS
+# # convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
+# h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
+# h_pool2 = max_pool_2x2(h_conv2, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING)
+#
+# p2s = h_pool2.get_shape().as_list()
+#
+# # densely connected layer
+# # image size has been reduced to 10x10 so we will add a fully-connected layer with 1024 neurons
+# W_fc1 = weight_variable([p2s[1]*p2s[2]*CONV2_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
+# b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
+#
+# h_pool2_flat = tf.reshape(h_pool2, [-1, p2s[1]*p2s[2]*CONV2_NUM_FILTERS])
+# h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
-# convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
-h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
-h_pool2 = max_pool_2x2(h_conv2, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING)
 
-p2s = h_pool2.get_shape().as_list()
+## 1 SET OF LAYERS
+p1s = h_pool1.get_shape().as_list()
 
 # densely connected layer
 # image size has been reduced to 10x10 so we will add a fully-connected layer with 1024 neurons
-W_fc1 = weight_variable([p2s[1]*p2s[2]*CONV2_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
+W_fc1 = weight_variable([p1s[1]*p1s[2]*CONV1_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
 b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
 
-h_pool2_flat = tf.reshape(h_pool2, [-1, p2s[1]*p2s[2]*CONV2_NUM_FILTERS])
-h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+h_pool1_flat = tf.reshape(h_pool1, [-1, p1s[1]*p1s[2]*CONV1_NUM_FILTERS])
+h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool1_flat, W_fc1) + b_fc1)
 
 
 # dropout
@@ -114,6 +127,7 @@ saver = tf.train.Saver()
 
 sess.run(tf.global_variables_initializer())
 
+k = 0
 for i in range(NUM_ITERS):
     # If you want to run from a previous model, do so here:
     # saver.restore(sess, "models/model_1/test.ckpt")
@@ -121,14 +135,25 @@ for i in range(NUM_ITERS):
     # TODO: Figure out batch training
     # batch = [train_data[i:i+50], train_labels[i:i+50]]
 
+    j = 0
+    while (j + BATCH_SIZE <= train_data.shape[0]):
+        # print i,j,k
+        batch = [train_data[j:j+BATCH_SIZE], train_labels[j:j+BATCH_SIZE]]
+        summary, _ = sess.run([merged, train_step], feed_dict={x: batch[0], y_: batch[1], keep_prob: DROPOUT_RATE})
+        train_writer.add_summary(summary, k)
+        j += BATCH_SIZE
+        k += 1
+
+
+
     if i % 10 == 0:
         summary, acc = sess.run([merged, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})
-        validation_writer.add_summary(summary, i)
+        validation_writer.add_summary(summary, k)
         print("step %d, validation accuracy %g"%(i, acc))
         save_path = saver.save(sess, MODEL_SAVE_DIR + "/" + MODEL_NAME + ".ckpt")
         print("Saved model %s at Step %d"%(MODEL_NAME,i))
-    summary, _ = sess.run([merged, train_step], feed_dict={x: train_data, y_: train_labels, keep_prob: DROPOUT_RATE})
-    train_writer.add_summary(summary, i)
+    # summary, _ = sess.run([merged, train_step], feed_dict={x: train_data, y_: train_labels, keep_prob: DROPOUT_RATE})
+    # train_writer.add_summary(summary, i)
 
 acc, y_c = sess.run([accuracy, y_conv], feed_dict={x: test_data, y_: test_labels, keep_prob: 1.0})
 
