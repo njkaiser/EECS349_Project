@@ -5,7 +5,8 @@ import tensorflow as tf
 import os
 
 
-MODEL_NAME = "[INSERT MODEL NAME HERE]"
+MODEL_NAME = "test"
+
 
 ##### DIRECTORIES:
 WORKSPACE = str(os.getcwd()) + '/'
