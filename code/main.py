@@ -133,7 +133,5 @@ print("final test accuracy %g"%(acc))
 print("weights:", sess.run(W_fc2))
 print("biases:", sess.run(b_fc2))
 
-saver = tf.train.Saver()
-
-save_path = saver.save(sess, "model_tmp/test.ckpt")
-print("Save to path: ", save_path)
+save_path = saver.save(sess, MODEL_SAVE_DIR + "/" + MODEL_NAME + ".ckpt")
+print("Saved final model to path: ", save_path)
