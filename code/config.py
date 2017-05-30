@@ -5,6 +5,9 @@ import tensorflow as tf
 import os
 
 
+MODEL_NAME = "test"
+
+
 ##### DIRECTORIES:
 WORKSPACE = str(os.getcwd()) + '/'
 # WORKSPACE = "home/chainatee/Spring/349_Machine_Learning/git_repo/EECS349_Project/"
@@ -13,23 +16,26 @@ WORKSPACE = str(os.getcwd()) + '/'
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
-
 MODEL_SAVE_DIR = WORKSPACE + "model_tmp"
 TRAINING_LOG_DIR = WORKSPACE + "log_tmp/train"
 VALIDATION_LOG_DIR = WORKSPACE + "log_tmp/validation"
+<<<<<<< HEAD
 
 MODEL_NAME = "model_6"
 
+=======
+>>>>>>> b5c0462c482873ded9d6ff9349d6c9eac62e4973
 print "WORKSPACE:",WORKSPACE
 print "MODEL_NAME:",MODEL_NAME
 
+
+# check for / set up correct workspace directories:
 if not os.path.exists(MODEL_SAVE_DIR):
     os.makedirs(MODEL_SAVE_DIR)
 if not os.path.exists(TRAINING_LOG_DIR):
     os.makedirs(TRAINING_LOG_DIR)
 if not os.path.exists(VALIDATION_LOG_DIR):
     os.makedirs(VALIDATION_LOG_DIR)
-
 if not os.path.isdir(DATA_DIR) or \
     not os.path.isdir(JPEG_IMAGE_DIR) or \
     not os.path.isdir(MODEL_SAVE_DIR):
@@ -54,6 +60,7 @@ NUM_ITERS = 600
 ##### HYPERPARAMETERS
 DROPOUT_RATE = 0.35
 LEARNING_RATE = 0.0001
+
 
 ##### NETWORK ARCHITECTURE:
 CONV1_NUM_FILTERS = 32
