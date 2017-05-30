@@ -31,7 +31,6 @@ if not os.path.exists(VALIDATION_LOG_DIR):
     os.makedirs(VALIDATION_LOG_DIR)
 
 if not os.path.isdir(DATA_DIR) or \
-    not os.path.isdir(INPUT_IMAGE_DIR) or \
     not os.path.isdir(JPEG_IMAGE_DIR) or \
     not os.path.isdir(MODEL_SAVE_DIR):
     print "Expected directory structure does not exist - are you running from the root of the workspace?"
@@ -49,9 +48,12 @@ NUM_TRAIN_EXAMPLES = 600
 NUM_VALIDATION_EXAMPLES = 100
 NUM_TEST_EXAMPLES = 100
 BATCH_SIZE = 10
-DROPOUT_RATE = 0.35
 NUM_ITERS = 600
 
+
+##### HYPERPARAMETERS
+DROPOUT_RATE = 0.35
+LEARNING_RATE = 0.0001
 
 ##### NETWORK ARCHITECTURE:
 CONV1_NUM_FILTERS = 32

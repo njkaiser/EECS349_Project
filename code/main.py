@@ -4,7 +4,7 @@ import numpy as np
 import os
 from import_data import import_data
 
-from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME
+from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE
 
 train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
 
@@ -95,7 +95,7 @@ y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 # we will include the additional parameter keep_prob in feed_dict to control the dropout rate
 # we will add logging to every 100th iteration in the training process
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
-train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+train_step = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 sess.run(tf.global_variables_initializer())
@@ -121,7 +121,7 @@ for i in range(20000):
         validation_writer.add_summary(summary, i)
         print("step %d, validation accuracy %g"%(i, acc))
         save_path = saver.save(sess, MODEL_SAVE_DIR + "/" + MODEL_NAME + ".ckpt")
-        print("Save #%d to path: "%(i), save_path)
+        print("Saved model %s at Step %d"%(MODEL_NAME,i))
     summary, _ = sess.run([merged, train_step], feed_dict={x: train_data, y_: train_labels, keep_prob: DROPOUT_RATE})
     train_writer.add_summary(summary, i)
 
