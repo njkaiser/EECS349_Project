@@ -14,7 +14,7 @@ DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
 
-MODEL_SAVE_DIR = WORKSPACE + "model_tmp/"
+MODEL_SAVE_DIR = WORKSPACE + "model_tmp"
 TRAINING_LOG_DIR = WORKSPACE + "log_tmp/train"
 VALIDATION_LOG_DIR = WORKSPACE + "log_tmp/validation"
 
