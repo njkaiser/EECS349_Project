@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 
 
-MODEL_NAME = "test"
+MODEL_NAME = "model_6"
 
 
 ##### DIRECTORIES:
@@ -14,17 +14,11 @@ WORKSPACE = str(os.getcwd()) + '/'
 # WORKSPACE = "/Users/Adam/github/EECS349_Project/"
 # WORKSPACE = "/home/njk/Courses/EECS349/Project/"
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
-INPUT_IMAGE_DIR = DATA_DIR + "subset0/"
+INPUT_IMAGE_DIR = DATA_DIR + "subset3/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
 MODEL_SAVE_DIR = WORKSPACE + "model_tmp"
 TRAINING_LOG_DIR = WORKSPACE + "log_tmp/train"
 VALIDATION_LOG_DIR = WORKSPACE + "log_tmp/validation"
-<<<<<<< HEAD
-
-MODEL_NAME = "model_6"
-
-=======
->>>>>>> b5c0462c482873ded9d6ff9349d6c9eac62e4973
 print "WORKSPACE:",WORKSPACE
 print "MODEL_NAME:",MODEL_NAME
 
