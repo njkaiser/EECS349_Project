@@ -61,8 +61,7 @@ h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
 
 # second convolutional layer
 # 64 features for each 5x5 patch
-# W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
-W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],1,CONV2_NUM_FILTERS], 'W_conv2')
+W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
 b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
 tf.summary.image('W_conv2', tf.transpose(W_conv2, [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
 
