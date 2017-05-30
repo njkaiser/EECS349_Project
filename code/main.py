@@ -60,39 +60,39 @@ x_image = tf.reshape(x, [-1,IMAGE_SIZE,IMAGE_SIZE,NUM_CHANNELS])
 h_conv1 = CONV1_ACTIV_FUNC(conv2d(x_image, W_conv1, CONV1_STRIDE, CONV1_PADDING) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
 
+## 2 SETS OF LAYERS
 # second convolutional layer
 # 64 features for each 5x5 patch
-# W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
-# b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
-#
-# tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
+W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
+b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
 
-## 2 SETS OF LAYERS
-# # convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
-# h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
-# h_pool2 = max_pool_2x2(h_conv2, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING)
-#
-# p2s = h_pool2.get_shape().as_list()
-#
-# # densely connected layer
-# # image size has been reduced to 10x10 so we will add a fully-connected layer with 1024 neurons
-# W_fc1 = weight_variable([p2s[1]*p2s[2]*CONV2_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
-# b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
-#
-# h_pool2_flat = tf.reshape(h_pool2, [-1, p2s[1]*p2s[2]*CONV2_NUM_FILTERS])
-# h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
 
+# convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
+h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
+h_pool2 = max_pool_2x2(h_conv2, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING)
 
-## 1 SET OF LAYERS
-p1s = h_pool1.get_shape().as_list()
+p2s = h_pool2.get_shape().as_list()
 
 # densely connected layer
 # image size has been reduced to 10x10 so we will add a fully-connected layer with 1024 neurons
-W_fc1 = weight_variable([p1s[1]*p1s[2]*CONV1_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
+W_fc1 = weight_variable([p2s[1]*p2s[2]*CONV2_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
 b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
 
-h_pool1_flat = tf.reshape(h_pool1, [-1, p1s[1]*p1s[2]*CONV1_NUM_FILTERS])
-h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool1_flat, W_fc1) + b_fc1)
+h_pool2_flat = tf.reshape(h_pool2, [-1, p2s[1]*p2s[2]*CONV2_NUM_FILTERS])
+h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+
+
+## 1 SET OF LAYERS
+# p1s = h_pool1.get_shape().as_list()
+#
+# # densely connected layer
+# # image size has been reduced to 10x10 so we will add a fully-connected layer with 1024 neurons
+# W_fc1 = weight_variable([p1s[1]*p1s[2]*CONV1_NUM_FILTERS, FC1_NUM_NEURONS], 'W_fc1')
+# b_fc1 = bias_variable([FC1_NUM_NEURONS], 'b_fc1')
+#
+# h_pool1_flat = tf.reshape(h_pool1, [-1, p1s[1]*p1s[2]*CONV1_NUM_FILTERS])
+# h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool1_flat, W_fc1) + b_fc1)
 
 
 # dropout
@@ -143,8 +143,6 @@ for i in range(NUM_ITERS):
         train_writer.add_summary(summary, k)
         j += BATCH_SIZE
         k += 1
-
-
 
     if i % 10 == 0:
         summary, acc = sess.run([merged, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})

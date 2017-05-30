@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 
 
-MODEL_NAME = "model_7"
+MODEL_NAME = "model_8"
 
 
 ##### DIRECTORIES:
@@ -48,7 +48,7 @@ NUM_TRAIN_EXAMPLES = 2064
 NUM_VALIDATION_EXAMPLES = 442
 NUM_TEST_EXAMPLES = 442
 BATCH_SIZE = 516
-NUM_ITERS = 1000
+NUM_ITERS = 400
 
 
 ##### HYPERPARAMETERS
