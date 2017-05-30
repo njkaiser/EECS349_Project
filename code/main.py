@@ -48,12 +48,12 @@ def max_pool_2x2(x, ksize, stride, padding):
 # first two dimensions are patch size (5x5)
 # next is the number of input channels (1)
 # last is the number of output channels (32)
-W_conv1 = weight_variable([CONV1_KERNEL_SIZE[0],CONV1_KERNEL_SIZE[1],1,CONV1_NUM_FILTERS], 'W_conv1')
+W_conv1 = weight_variable([CONV1_KERNEL_SIZE[0],CONV1_KERNEL_SIZE[1],NUM_CHANNELS,CONV1_NUM_FILTERS], 'W_conv1')
 b_conv1 = bias_variable([CONV1_NUM_FILTERS], 'b_conv1')
 tf.summary.image('W_conv1', tf.transpose(W_conv1, [3, 0, 1, 2]), max_outputs=CONV1_NUM_FILTERS)
 
 # reshape x to a 4d tensor, 2nd and 3rd dimensions are image width and height, final dimension is the number of color channels
-x_image = tf.reshape(x, [-1,IMAGE_SIZE,IMAGE_SIZE,1])
+x_image = tf.reshape(x, [-1,IMAGE_SIZE,IMAGE_SIZE,NUM_CHANNELS])
 
 # convolve x_image with the weight tensor, add the bias, apply the ReLU function, and finally max pool
 h_conv1 = CONV1_ACTIV_FUNC(conv2d(x_image, W_conv1, CONV1_STRIDE, CONV1_PADDING) + b_conv1)
@@ -63,7 +63,8 @@ h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
 # 64 features for each 5x5 patch
 W_conv2 = weight_variable([CONV2_KERNEL_SIZE[0],CONV2_KERNEL_SIZE[1],CONV1_NUM_FILTERS,CONV2_NUM_FILTERS], 'W_conv2')
 b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
-tf.summary.image('W_conv2', tf.transpose(W_conv2, [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
+
+tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
 
 # convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
 h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
@@ -111,7 +112,7 @@ validation_writer = tf.summary.FileWriter(VALIDATION_LOG_DIR, sess.graph)
 saver = tf.train.Saver()
 
 # for i in range(1):
-for i in range(250):
+for i in range(500):
     # If you want to run from a previous model, do so here:
     # saver.restore(sess, "models/model_1/test.ckpt")
 
