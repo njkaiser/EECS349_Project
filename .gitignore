@@ -14,6 +14,5 @@ data/LUNA2016/output_small/*
 tensorboard_log/*
 model_tmp/*
 log_tmp/*
-models/*
 data/LUNA2016/masksTestPredicted.npy
 code/build_image_data.py
