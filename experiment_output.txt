@@ -1,8 +1,0 @@
-model_config_2
-experiment end time:2017-06-01 14:41:10.634033
-configuration:
-(conv1_kernel_size, conv2_kernel_size, conv1_num_filters, conv2_num_filters, dropout_rate)
-[3, 3][3, 3]16320.3step:
-0
-validation accuracy:
-0.667421

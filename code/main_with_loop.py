@@ -24,10 +24,6 @@ print "Test Labels Size", test_labels.shape
 model_base_name = "model_config_"
 log_base_name = "log_config_"
 
-sess = tf.InteractiveSession()
-
-# NOTE: info on convolutional neural networks: http://cs231n.github.io/convolutional-networks/
-
 # create functions to initialize weights with a slightly positive initial bias to avoid "dead neurons"
 def weight_variable(shape, name):
     initial = tf.truncated_normal(shape, stddev=0.1)
@@ -44,7 +40,7 @@ def conv2d(x, W, stride, padding):
 def max_pool_2x2(x, ksize, stride, padding):
     return tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1], strides=[1, stride, stride, 1], padding=padding)
 
-
+config_names = ['conv1_kernel_size', 'conv2_kernel_size', 'conv1_num_filters', 'conv2_num_filters', 'dropout_rate']
 config_list = []
 conv1_kernel_size = [[3, 3],[5, 5], [7, 7]]
 conv2_kernel_size = [[3, 3],[5, 5], [7, 7]]
@@ -58,7 +54,9 @@ for c1ks in conv1_kernel_size:
                 for dr in dropout_rates:
                     config_list.append([c1ks, c2ks, c1nf, c2nf, dr])
 
-print "Config List: ",len(config_list)
+print "Config List Length:", len(config_list)
+
+sess = tf.InteractiveSession()
 
 # create a placeholder for input
 x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])
@@ -69,19 +67,20 @@ y_ = tf.placeholder(tf.float32, [None, NUM_CLASSES])
 # placeholder for keep probability for the dropout layer
 keep_prob = tf.placeholder(tf.float32)
 
+
 # iterate through all possible configurations
 for iteration,config in enumerate(config_list):
     model_name = model_base_name + str(iteration)
     model_dir = MODEL_SAVE_DIR + model_name + '/'
-    log_dir = LOG_DIR + log_base_name + str(iteration) '/'
+    log_dir = LOG_DIR + log_base_name + str(iteration) + '/'
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    print "PREPARING TO TRAIN: ",model_name
-    print "Current configuration is: ",config
+    print "PREPARING TO TRAIN:", model_name
+    print "Current configuration is:", config
 
     # first convolutional layer
     W_conv1 = weight_variable([config[0][0], config[0][1], NUM_CHANNELS, config[2]], 'W_conv1')
@@ -114,7 +113,6 @@ for iteration,config in enumerate(config_list):
     h_fc1 = FC1_ACTIV_FUNC(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
     # dropout
-    # keep_prob = tf.placeholder(tf.float32) # moved to the section before for loop
     h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
     # readout layer
@@ -145,15 +143,8 @@ for iteration,config in enumerate(config_list):
     val_acc_list = []
     k = 0
     for i in range(NUM_ITERS):
-        # If you want to run from a previous model, do so here:
-        # saver.restore(sess, "models/model_1/test.ckpt")
-
-        # TODO: Figure out batch training
-        # batch = [train_data[i:i+50], train_labels[i:i+50]]
-
         j = 0
         while (j + BATCH_SIZE <= train_data.shape[0]):
-            # print i,j,k
             batch = [train_data[j:j+BATCH_SIZE], train_labels[j:j+BATCH_SIZE]]
             summary, _ = sess.run([merged, train_step], feed_dict={x: batch[0], y_: batch[1], keep_prob: config[4]})
             train_writer.add_summary(summary, k)
@@ -169,8 +160,6 @@ for iteration,config in enumerate(config_list):
             val_acc_list.append(acc)
             save_path = saver.save(sess, model_dir + model_name + ".ckpt")
             print("Saved model %s at Step %d"%(model_name, i))
-        # summary, _ = sess.run([merged, train_step], feed_dict={x: train_data, y_: train_labels, keep_prob: DROPOUT_RATE})
-        # train_writer.add_summary(summary, i)
 
     acc, y_c = sess.run([accuracy, y_conv], feed_dict={x: test_data, y_: test_labels, keep_prob: 1.0})
 
@@ -178,37 +167,29 @@ for iteration,config in enumerate(config_list):
     print("Final test accuracy for %s is %g"%(model_name, acc))
 
     save_path = saver.save(sess, model_dir + model_name + ".ckpt")
-    print("Saved final model to path: ", save_path)
+    print("Saved final %s to path %s: "%(model_name, save_path))
 
-    # ADDED BY NATE FOR EXPERIMENT
-    print("step_list:\n", step_list)
-    print("loss_list:\n", loss_list)
-    print("val_acc_list:\n", val_acc_list)
+    # print current lists of experiment values
+    print "step_list:", step_list
+    print "loss_list:", loss_list
+    print "val_acc_list:", val_acc_list
 
-    with open("experiment_output.txt", 'w') as f:
-        f.write(model_name + '\n')
-        f.write("experiment end time:" + str(datetime.now()) + '\n')
+    print "\n"
+
+    # write experiment output to file -- flag 'a' for append
+    config_dict = dict(zip(config_names, config))
+    with open("experiment_output.txt", 'a') as f:
+        f.write(model_name + '\n\n')
+        f.write("experiment end time: " + str(datetime.now()) + '\n\n')
         f.write("configuration:\n")
-        f.write("(conv1_kernel_size, conv2_kernel_size, conv1_num_filters, conv2_num_filters, dropout_rate)\n")
-        for c in config:
-            f.write(str(c) + ', ')
-            f.seek(-2, os.SEEK_CUR)
-            f.truncate()
-        f.write("step:\n")
-        for s in step_list:
-            f.write(str(s) + ', ')
-        f.seek(-2, os.SEEK_CUR)
-        f.truncate()
-        # f.write("\nloss:\n")
-        # for l in loss_list:
-        #     f.write(l + ', ')
-        # f.seek(-2, os.SEEK_CUR)
-        # f.truncate()
+        for c in config_dict:
+            f.write(c + '= ' + str(config_dict[c]) + '\n')
+        f.write("\nstep:\n")
+        f.write(','.join([str(s) for s in step_list]))
+        f.write("\nloss:\n")
+        f.write(','.join([str(l) for l in loss_list]))
         f.write("\nvalidation accuracy:\n")
-        for a in val_acc_list:
-            f.write(str(a) + ', ')
-        f.seek(-2, os.SEEK_CUR)
-        f.truncate()
-
-    # IMPORTANT: DO WE NEED TO RUN THIS TO START A NEW SESSION?
-    # sess.close() #?????
+        f.write(','.join([str(a) for a in val_acc_list]))
+        f.write("\n\n")
+        f.write("--------------------")
+        f.write("\n\n")
