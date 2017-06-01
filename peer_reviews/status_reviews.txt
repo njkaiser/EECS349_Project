@@ -1,0 +1,160 @@
+On Tue, May 30, 2017 at 9:33 PM, Ellen Tucker <ellentucker@u.northwestern.edu> wrote:
+Hi Nate,
+
+Attached is the report for your group.  Good luck!
+
+Compelling and ambitious project! It sounds as though computational and time constraints won't leave you with a lot of time to tinker with your model. Nevertheless, your work leading up to this is going to be really important and probably quite central to your final report. What kind of preprocessing did you end up doing and why? Since the bulk of your project seems to have been assembling and preprocessing the data, make sure to elaborate on the challenges and decisions associated with this. Representation is a very important component of ML and deserves discussion here.
+
+As you've said, your results are now sort of at the mercy of the GPUs and initial parameter choices. I recommend doing what you can with the time left to try to tune your model in TensorFlow, but I especially recommend that you focus in on the work that you've already done for preprocessing stages and why you thought your approach was appropriate. The scope and scale of your project, the challenges they presented, and how they affected your experimental approach will be interesting and important to include in your writeup. Good luck!
+
+-Ellen
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: <boruiwang2016@u.northwestern.edu>
+Date: Sat, May 27, 2017 at 1:58 AM
+Subject: status report review
+To: "AdamPollack2017@u.northwestern.edu" <AdamPollack2017@u.northwestern.edu>
+
+
+HI Adam,
+
+Here is your review:
+
+The motivation and description of your task is quite straightforward and friendly to readers. And the task you choose is with very high application value. But deep learning is very hard to manipulate and usually takes a long time to train, which is already mentioned in your concerns. I totally agree with your choice of planned approach and most concerns. Besides these I think you should read papers on parameter tuning since parameters like weights, number of nodes, number of layers are hard to optimize. It is better to find a similar completed task (likely a paper or github repo) and see what they did.
+
+I think comparison with other algorithms won’t be necessary since it weighs too much than a course project. What you should focus on should be deploying the project on cloud platform and proficiently using the deep learning platform. Further attempts are more like a real research’s workload.
+
+Good luck!
+
+Borui
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Janice Fang <janicefang@u.northwestern.edu>
+Date: Mon, May 29, 2017 at 8:26 PM
+Subject: EECS 349: Project Status Report Peer Review
+To: AdamPollack2017@u.northwestern.edu
+
+
+Team Members: Nate Kaiser, Adam Pollack, Chainatee Tanakulrungson
+
+1.  List any questions, concerns, or suggestions regarding the work the group has done so far -- do the preliminary results make sense, is the approach being taken so far reasonable, and what are your suggestions? (3-4 sentences)
+Aside from running your image dataset through your neural network, it seems that you guys have done all the data-processing you can do. I think the approach you've taken so far seems reasonable. Most importantly, I recommend that you get started on actually training your learner as soon as possible, especially since you mentioned that none of you guys have had experience with it before.
+
+
+2.  Comment on the group's plan for the remainder of the quarter. Time before the project deadline is brief, so which parts of the group's plan would you prioritize? Do you have other suggestions for putting finishing touches on the project? (3-4 sentences)
+As I mentioned above, I would definitely prioritize training your learner and tuning it. In case you run into any problems (which will likely happen with complex networks like CNN), you can still get help from the TAs in office hours. This is particularly important since, as you mentioned in the report, neural networks are difficult to troubleshoot. Furthermore, make sure you also leave enough time to work on the website so that you can flesh out the results of your project in a well-presented manner.
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Wesley Chan <wesleychan2019@u.northwestern.edu>
+Date: Tue, May 30, 2017 at 3:05 PM
+Subject: EECS 349 Status Report Review
+To: AdamPollack2017@u.northwestern.edu
+
+
+Hey! This is my review of your status report:
+
+
+1.    List any questions, concerns, or suggestions regarding the work the group has done so far -- do the preliminary results make sense, is the approach being taken so far reasonable, and what are your suggestions?
+
+So far, it does look like you guys have made a good enough amount of progress. I am concerned, like you guys are, about the long training times of deep neural networks. I think it is clear that CNNs are probably the best way to go, but obviously a CNN takes a huge amount of time to train, so if you want to iterate and improve upon your results you have to start as soon as possible. However, I think the approach and data is reasonable and you guys have the right mindset and game plan to tackle the problem, and now it is just an issue of executing.
+
+2.    Comment on the group's plan for the remainder of the quarter. Time before the project deadline is brief, so which parts of the group's plan would you prioritize? Do you have other suggestions for putting finishing touches on the project?
+
+I think your plan is solid. As mentioned above it seems that you guys know what you need to do, and now it is just a matter of doing it. Hopefully at this point, your dataset is completely finalized, and you’ve began training your learners to some extent. If you guys are at this point, I’d suggest tuning some parameters in your NN and even trying out some other models just to give a better gauge of your results.
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Zilun Yu <zilunyu2019@u.northwestern.edu>
+Date: Tue, May 30, 2017 at 4:46 PM
+Subject: EECS 349 Peer Review
+To: AdamPollack2017@u.northwestern.edu
+
+
+Hi,
+
+Here's a copy of my Machine Learning Peer Review for your project:
+
+I really like your project idea because it’s very original, and it’s impressive that you are able to find raw data and convert it to the format that could be used. However, I think you may be a little behind in terms of time, which is totally understandable considering how much work data-processing is. So I would suggest that you finish up data processing and try running you data through a CNN model asap, since there may be some unexpected issues.
+
+I think you have a good plan for the rest of the quarter. Instead of trying other models like nearest neighbor and SVM and comparing the results, I think you should focus on running and optimizing CNN since it seems that you’ve put a lot of efforts into the setup. I don’t know how much parameter tuning you need to do, but I am sure the TA and professor Downey will be willing to give you some advice about that (if you need any). But even if some CNN models don't give good results, I think it would be a great learning opportunity to understand CNN better.
+
+Good luck!
+
+Zilun
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Pranav Shankar <pranavshankar2018@u.northwestern.edu>
+Date: Tue, May 30, 2017 at 10:47 PM
+Subject: ML 2nd peer review
+To: adampollack2017@u.northwestern.edu, chainateetanakulrungson2017@u.northwestern.edu
+
+1	List any questions, concerns, or suggestions regarding the work the group has done so far -- do the preliminary results make sense, is the approach being taken so far reasonable, and what are your suggestions? (3-4 sentences)
+
+The number of training samples is vital for CNN, it would be nice to know how many samples you guys have. (the link has about 1000 but you might need more). I think the only bottleneck I can think of is availability of processing power to perform CNN, however since you guys have recently secured it, the progress should go smoothly from now on. I was also really interested in how you pre-processed the data
+
+2	Comment on the group's plan for the remainder of the quarter. Time before the project deadline is brief, so which parts of the group's plan would you prioritize? Do you have other suggestions for putting finishing touches on the project? (3-4 sentences)
+
+I think the biggest problem is CNN is it is very difficult to debug. So even if you have secured processing power, if you don't get a favourable result, theres little you can do about finding what works. I suggest looking into image processing techniques like edge detection or converting your image to binary and then trying to detect presence of the nodule (subsequently find a feature that distinguishes cancer).
+I would prioritise finding features as explained above
+
+Overall I loved the topic (I have worked on glaucoma detection before) I look forward to seeing your results
+
+Thank you,
+Warm Regards,
+Pranav Shankar
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Sebastian Pretzer <pretzer@u.northwestern.edu>
+Date: Tue, May 30, 2017 at 10:50 PM
+Subject: EECS349 Status Report
+To: AdamPollack2017@u.northwestern.edu
+
+
+I think you guys have a cool project prepared, and my only main concern is timing. But you understand that, so as long as you are on top of your schedule, you should be good.
+
+While your tests are running, I would recommend starting on feature based learning techniques. That way if you don’t get the results you want with CNNs and do not have time to retrain, you will have already started on your back up plan. You also don’t need to expect insanely good results, since this is an issue that IBM Watson has only recently completed this task to a higher accuracy than a doctor.
+
+
+Sebastian Pretzer
+Northwestern University | 2018
+Computer Science | Mathematics
+202-812-9657
+
+
+======================================================================================
+
+
+---------- Forwarded message ----------
+From: Kerui Tan <keruitan2018@u.northwestern.edu>
+Date: Tue, May 30, 2017 at 11:39 PM
+Subject: EECS 349 Project Status Review
+To: AdamPollack2017@u.northwestern.edu
+
+
+Hello Adam,
+The peer review is below. Good luck! - Kerui Tan
+Really good that everyone has the necessary data and computing power needed to run through training and testing. I agree with your concerns, it seems like time is a big issue. Would different people be able to run a different learner, in case TensorFlow doesn’t work out?
+Could one person use SVM or something, while another person or two run TensorFlow? You guys seem to be on track, and I would focus on getting TensorFlow running first. Great project!
