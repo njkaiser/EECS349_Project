@@ -22,12 +22,6 @@ print "Test Labels Size", test_labels.shape
 
 # sess = tf.InteractiveSession()
 
-# create a placeholder for input
-x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])
-
-# to implement cross-entropy we need to add a placeholder to input the correct answers
-y_ = tf.placeholder(tf.float32, [None, NUM_CLASSES])
-
 # NOTE: info on convolutional neural networks: http://cs231n.github.io/convolutional-networks/
 
 # create functions to initialize weights with a slightly positive initial bias to avoid "dead neurons"
@@ -62,6 +56,13 @@ for c1ks in conv1_kernel_size:
 
 
 for config in config_list:
+
+    # create a placeholder for input
+    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])
+
+    # to implement cross-entropy we need to add a placeholder to input the correct answers
+    y_ = tf.placeholder(tf.float32, [None, NUM_CLASSES])
+
     with tf.Session() as sess:
         # first convolutional layer
         # 32 features for each 5x5 patch
