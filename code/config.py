@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 
 
-MODEL_NAME = "model_5"
+MODEL_NAME = "test_test_test"
 
 
 ##### DIRECTORIES:
@@ -16,23 +16,28 @@ WORKSPACE = str(os.getcwd()) + '/'
 DATA_DIR = WORKSPACE + "data/LUNA2016/"
 INPUT_IMAGE_DIR = DATA_DIR + "subset3/"
 JPEG_IMAGE_DIR = DATA_DIR + "images/"
-MODEL_SAVE_DIR = WORKSPACE + "model_tmp"
-TRAINING_LOG_DIR = WORKSPACE + "log_tmp/train"
-VALIDATION_LOG_DIR = WORKSPACE + "log_tmp/validation"
-print "WORKSPACE:",WORKSPACE
-print "MODEL_NAME:",MODEL_NAME
+MODEL_SAVE_DIR = WORKSPACE + "model_tmp/"
+LOG_DIR = WORKSPACE + "log_tmp/"
+TRAINING_LOG_DIR = LOG_DIR + "train"
+VALIDATION_LOG_DIR = LOG_DIR + "validation"
 
 
 # check for / set up correct workspace directories:
 if not os.path.exists(MODEL_SAVE_DIR):
     os.makedirs(MODEL_SAVE_DIR)
-if not os.path.exists(TRAINING_LOG_DIR):
-    os.makedirs(TRAINING_LOG_DIR)
-if not os.path.exists(VALIDATION_LOG_DIR):
-    os.makedirs(VALIDATION_LOG_DIR)
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# Un-comment if training single model
+# if not os.path.exists(TRAINING_LOG_DIR):
+#     os.makedirs(TRAINING_LOG_DIR)
+# if not os.path.exists(VALIDATION_LOG_DIR):
+#     os.makedirs(VALIDATION_LOG_DIR)
+
 if not os.path.isdir(DATA_DIR) or \
     not os.path.isdir(JPEG_IMAGE_DIR) or \
-    not os.path.isdir(MODEL_SAVE_DIR):
+    not os.path.isdir(MODEL_SAVE_DIR) or \
+    not os.path.isdir(LOG_DIR):
     print "Expected directory structure does not exist - are you running from the root of the workspace?"
     exit(-1)
 
@@ -48,7 +53,7 @@ NUM_TRAIN_EXAMPLES = 2064
 NUM_VALIDATION_EXAMPLES = 442
 NUM_TEST_EXAMPLES = 442
 BATCH_SIZE = 208
-NUM_ITERS = 400
+NUM_ITERS = 1
 
 
 ##### HYPERPARAMETERS
