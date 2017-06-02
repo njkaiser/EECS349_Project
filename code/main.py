@@ -1,5 +1,5 @@
 import tensorflow as tf
-from model import train_model
+import model
 
 config_names = ['conv1_kernel_size', 'conv2_kernel_size', 'conv1_num_filters', 'conv2_num_filters', 'dropout_rate']
 config_list = []
@@ -17,6 +17,6 @@ for c1ks in conv1_kernel_size:
 
 print "Config List Length:", len(config_list)
 
-for iteration in range(25,len(config_list)):
+for iteration in range(33,len(config_list)):
     config = config_list[iteration]
-    train_model(iteration, config)
+    model.train_model(iteration, config, config_names)

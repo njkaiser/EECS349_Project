@@ -1,11 +1,13 @@
 import tensorflow as tf
 import numpy as np
 from import_data import import_data
+import os
+from datetime import datetime
+from collections import OrderedDict
 
-from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE, NUM_ITERS, BATCH_SIZE, WORKSPACE
+from config import WORKSPACE, LOG_DIR, MODEL_SAVE_DIR, IMAGE_SIZE, NUM_CLASSES, NUM_CHANNELS, CONV1_ACTIV_FUNC, CONV1_STRIDE, CONV1_PADDING, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING, CONV2_ACTIV_FUNC, CONV2_STRIDE, CONV2_PADDING, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING, FC1_ACTIV_FUNC, FC1_NUM_NEURONS, LEARNING_RATE, NUM_ITERS, BATCH_SIZE
 
 print "WORKSPACE:",WORKSPACE
-print "MODEL_NAME:",MODEL_NAME
 
 train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
 
@@ -20,15 +22,17 @@ print "Validation Labels Size", validation_labels.shape
 print "Test Data Size", test_data.shape
 print "Test Labels Size", test_labels.shape
 
-sess = tf.InteractiveSession()
+model_base_name = "model_config_"
+log_base_name = "log_config_"
 
 # create a placeholder for input
 x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])
 
-# to implement cross-entropy we need to add a placeholder to input the correct answers
+# to implement cross entropy we need to add a placeholder to input the correct answers
 y_ = tf.placeholder(tf.float32, [None, NUM_CLASSES])
 
-# NOTE: info on convolutional neural networks: http://cs231n.github.io/convolutional-networks/
+# placeholder for keep probability for the dropout layer
+keep_prob = tf.placeholder(tf.float32)
 
 # create functions to initialize weights with a slightly positive initial bias to avoid "dead neurons"
 def weight_variable(shape, name):
@@ -46,7 +50,7 @@ def conv2d(x, W, stride, padding):
 def max_pool_2x2(x, ksize, stride, padding):
     return tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1], strides=[1, stride, stride, 1], padding=padding)
 
-def train_model(iteration, config):
+def train_model(iteration, config, config_names):
     with tf.Session() as sess:
         model_name = model_base_name + str(iteration)
         model_dir = MODEL_SAVE_DIR + model_name + '/'
