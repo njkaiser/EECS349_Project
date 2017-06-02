@@ -123,6 +123,8 @@ def import_data():
     train_labels = labels[0:idx1]
     validation_labels = labels[idx1:idx2]
     test_labels = labels[idx2:idx3]
+
+    test_images_filenames = image_list[idx2:idx3]
     # print "type3:", type(train_data[0][0][0][0])
 
     # print "train, validation, and test data {{{ label }}} shapes:"
@@ -135,7 +137,7 @@ def import_data():
     # print "test_data:\n", test_data
     # assert False
 
-    return train_data, validation_data, test_data, train_labels, validation_labels, test_labels
+    return train_data, validation_data, test_data, train_labels, validation_labels, test_labels, test_images_filenames
 
 
 
