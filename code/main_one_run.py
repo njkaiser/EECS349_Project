@@ -61,7 +61,7 @@ x_image = tf.reshape(x, [-1,IMAGE_SIZE,IMAGE_SIZE,NUM_CHANNELS])
 
 # convolve x_image with the weight tensor, add the bias, apply the ReLU function, and finally max pool
 h_conv1 = CONV1_ACTIV_FUNC(conv2d(x_image, W_conv1, CONV1_STRIDE, CONV1_PADDING) + b_conv1)
-# h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
+h_pool1 = max_pool_2x2(h_conv1, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING)
 
 ## 2 SETS OF LAYERS
 # second convolutional layer
@@ -72,7 +72,7 @@ b_conv2 = bias_variable([CONV2_NUM_FILTERS], 'b_conv2')
 tf.summary.image('W_conv2', tf.transpose(W_conv2[:, :, 0:1, :], [3, 0, 1, 2]), max_outputs=CONV2_NUM_FILTERS)
 
 # convolve the result of h_pool1 with the weight tensor, add the bias, apply the ReLU function, and finally max pool
-h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_conv1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
+h_conv2 = CONV2_ACTIV_FUNC(conv2d(h_pool1, W_conv2, CONV2_STRIDE, CONV2_PADDING) + b_conv2)
 h_pool2 = max_pool_2x2(h_conv2, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING)
 
 p2s = h_pool2.get_shape().as_list()
