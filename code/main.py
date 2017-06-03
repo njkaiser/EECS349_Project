@@ -17,6 +17,6 @@ for c1ks in conv1_kernel_size:
 
 print "Config List Length:", len(config_list)
 
-for iteration in range(33,len(config_list)):
+for iteration in range(76,len(config_list)):
     config = config_list[iteration]
     model.train_model(iteration, config, config_names)
