@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 def postprocess():
     data = {}
     config = []
-    with open("experiment_output_post_Hanlon.txt", 'r') as f:
+    with open("data/experiment_output_FINAL.txt", 'r') as f:
         for line in f:
             line = line.strip().split()
             if line:
