@@ -1,13 +1,16 @@
 import tensorflow as tf
 import numpy as np
 from import_data import import_data
+import shutil
+import os
+import time
 
 from config import IMAGE_SIZE, NUM_CLASSES, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_PADDING, CONV1_ACTIV_FUNC, POOL1_FILTER_SIZE, POOL1_STRIDE, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_PADDING, CONV2_ACTIV_FUNC, POOL2_FILTER_SIZE, POOL2_STRIDE, FC1_NUM_NEURONS, FC1_ACTIV_FUNC, DROPOUT_RATE, NUM_CHANNELS, CONV1_STRIDE, CONV2_STRIDE, POOL1_PADDING, POOL2_PADDING, MODEL_SAVE_DIR, TRAINING_LOG_DIR, VALIDATION_LOG_DIR, MODEL_NAME, LEARNING_RATE, NUM_ITERS, BATCH_SIZE, WORKSPACE
 
 print "WORKSPACE:",WORKSPACE
 print "MODEL_NAME:",MODEL_NAME
 
-train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
+train_data, validation_data, test_data, train_labels, validation_labels, test_labels ,test_images_filenames= import_data()
 
 train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1] * train_data.shape[2]))
 validation_data = np.reshape(validation_data, (validation_data.shape[0], validation_data.shape[1] * validation_data.shape[2]))
@@ -163,6 +166,51 @@ print("final test accuracy %g"%(acc))
 
 print("weights:", sess.run(W_fc2))
 print("biases:", sess.run(b_fc2))
+
+##################### Save incorrectly classified images
+eq_arr = np.equal(np.argmax(y_c, axis = 1), np.argmax(test_labels, axis = 1))
+test_images_filenamesWithResult = ["%s_result%s.png" % t for t in zip(list(test_images_filenames), map(str,test_labels))]
+test_results = dict(zip(test_images_filenames, eq_arr))
+test_results_rename = dict(zip(test_images_filenames,test_images_filenamesWithResult))
+timenow = time.strftime("%d_%m_%Y-%H_%M_%S")
+test_result_path = MODEL_SAVE_DIR + "/" + MODEL_NAME + "/validation_result" + timenow
+
+if not os.path.isdir(test_result_path):
+      os.makedirs(test_result_path)
+else:
+      shutil.rmtree(test_result_path)  
+      os.makedirs(test_result_path)
+test_result_filenames = []
+
+for filename, result in test_results.iteritems():
+    if not result:
+        shutil.copy(filename, test_result_path)
+        test_result_filenames.append(filename)
+##################### (END) Save incorrectly classified images
+
+##################### Create confusion matrix.txt
+pos_images, neg_images, pos_misclass_images, neg_misclass_images = 0,0,0,0
+for filename in test_images_filenames:
+    if filename.find('pos') > 0:
+        pos_images += 1
+    else:
+        neg_images += 1
+for filename in test_result_filenames:
+    if filename.find('pos') > 0:
+        pos_misclass_images += 1
+    else:
+        neg_misclass_images += 1    
+f= open(test_result_path + "/confusion_"+timenow+".txt","w+")
+f.write("CONFUSION MATRIX for " + timenow + "\r\n")
+f.write("Ground truth|  1  |  0  |\r\n")
+f.write("Classified  |-----|-----|\r\n")
+f.write("     1      |  "+ str(pos_images-pos_misclass_images) + "  | " + str(neg_misclass_images) + "  |\r\n")
+f.write("     0      |  "+ str(pos_misclass_images) + "  | " + str(neg_images-neg_misclass_images) + "  |\r\n")
+f.write("misclassified images:\r\n")
+for filename in test_result_filenames:
+    f.write(filename + "\r\n")
+print("Saved incorrectly classified image and confusion matrix to path:", test_result_path)
+##################### (END) Create confusion matrix.txt
 
 save_path = saver.save(sess, MODEL_SAVE_DIR + "/" + MODEL_NAME + ".ckpt")
 print("Saved final model to path: ", save_path)

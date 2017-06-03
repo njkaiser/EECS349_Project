@@ -4,12 +4,14 @@ from import_data import import_data
 import os
 from datetime import datetime
 from collections import OrderedDict
+import shutil
+import time
 
 from config import WORKSPACE, LOG_DIR, MODEL_SAVE_DIR, IMAGE_SIZE, NUM_CLASSES, NUM_CHANNELS, CONV1_ACTIV_FUNC, CONV1_STRIDE, CONV1_PADDING, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING, CONV2_ACTIV_FUNC, CONV2_STRIDE, CONV2_PADDING, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING, FC1_ACTIV_FUNC, FC1_NUM_NEURONS, LEARNING_RATE, NUM_ITERS, BATCH_SIZE
 
 print "WORKSPACE:",WORKSPACE
 
-train_data, validation_data, test_data, train_labels, validation_labels, test_labels = import_data()
+train_data, validation_data, test_data, train_labels, validation_labels, test_labels, test_images_filenames = import_data()
 
 train_data = np.reshape(train_data, (train_data.shape[0], train_data.shape[1] * train_data.shape[2]))
 validation_data = np.reshape(validation_data, (validation_data.shape[0], validation_data.shape[1] * validation_data.shape[2]))
@@ -143,7 +145,56 @@ def train_model(iteration, config, config_names):
                 save_path = saver.save(sess, model_dir + model_name + ".ckpt")
                 print("Saved model %s at Step %d"%(model_name, i))
 
+
+
+
         acc, y_c = sess.run([accuracy, y_conv], feed_dict={x: test_data, y_: test_labels, keep_prob: 1.0})
+
+        ##################### Save incorrectly classified images
+        eq_arr = np.equal(np.argmax(y_c, axis = 1), np.argmax(test_labels, axis = 1))
+        test_images_filenamesWithResult = ["%s_result%s.png" % t for t in zip(list(test_images_filenames), map(str,test_labels))]
+        test_results = dict(zip(test_images_filenames, eq_arr))
+        test_results_rename = dict(zip(test_images_filenames,test_images_filenamesWithResult))
+        timenow = time.strftime("%d_%m_%Y-%H_%M_%S")
+        test_result_path = MODEL_SAVE_DIR + "/" + model_name  + "/validation_result" + timenow
+
+        if not os.path.isdir(test_result_path):
+            os.makedirs(test_result_path)
+        else:
+            shutil.rmtree(test_result_path)  
+            os.makedirs(test_result_path)
+        test_result_filenames = []
+
+        for filename, result in test_results.iteritems():
+            if not result:
+                shutil.copy(filename, test_result_path)
+                test_result_filenames.append(filename)
+        ##################### (END) Save incorrectly classified images
+
+        ##################### Create confusion matrix.txt
+        pos_images, neg_images, pos_misclass_images, neg_misclass_images = 0,0,0,0
+        for filename in test_images_filenames:
+            if filename.find('pos') > 0:
+                pos_images += 1
+            else:
+                neg_images += 1
+        for filename in test_result_filenames:
+            if filename.find('pos') > 0:
+                pos_misclass_images += 1
+            else:
+                neg_misclass_images += 1    
+        f= open(test_result_path + "/confusion_"+timenow+".txt","w+")
+        f.write("CONFUSION MATRIX for " + timenow + "\r\n")
+        f.write("Ground truth|  1  |  0  |\r\n")
+        f.write("Classified  |-----|-----|\r\n")
+        f.write("     1      |  "+ str(pos_images-pos_misclass_images) + "  | " + str(neg_misclass_images) + "  |\r\n")
+        f.write("     0      |  "+ str(pos_misclass_images) + "  | " + str(neg_images-neg_misclass_images) + "  |\r\n")
+        f.write("misclassified images:\r\n")
+        for filename in test_result_filenames:
+            f.write(filename + "\r\n")
+        print("Saved incorrectly classified image and confusion matrix to path:", test_result_path)
+        f.close()
+        ##################### (END) Create confusion matrix.txt
 
         # print("Final predictions",y_c)
         print("Final test accuracy for %s is %g"%(model_name, acc))
