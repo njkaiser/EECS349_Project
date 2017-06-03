@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from postprocess import postprocess
+import time
 
 
 def interactive_plot():
@@ -39,13 +40,15 @@ def interactive_plot():
     ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
 
     # create legend, put to right of plot area
-    leg = ax.legend(fancybox=True, shadow=True, ncol=3, loc='upper right', bbox_to_anchor=(1.2, 1.0))
+    leg = ax.legend(fancybox=True, shadow=True, ncol=4, loc='upper right', bbox_to_anchor=(1.2, 1.0))
     leg.get_frame().set_alpha(0.4)
 
     # I have no idea what this does, but I think it links legend entries to the data
     lined = dict()
     for legline, origline in zip(leg.get_lines(), accuracies):
         legline.set_picker(5)  # 5 pts tolerance
+        origline.set_visible(False)
+        legline.set_alpha(0.2)
         lined[legline] = origline
 
     # legend click callback
@@ -89,13 +92,15 @@ def interactive_plot():
     ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
 
     # create legend, put to right of plot area
-    leg = ax.legend(fancybox=True, shadow=True, ncol=3, loc='upper right', bbox_to_anchor=(1.2, 1.0))
+    leg = ax.legend(fancybox=True, shadow=True, ncol=4, loc='upper right', bbox_to_anchor=(1.2, 1.0))
     leg.get_frame().set_alpha(0.4)
 
     # I have no idea what this does, but I think it links legend entries to the data
     lined = dict()
     for legline, origline in zip(leg.get_lines(), losses):
         legline.set_picker(5)  # 5 pts tolerance
+        origline.set_visible(False)
+        legline.set_alpha(0.2)
         lined[legline] = origline
 
     # legend click callback
