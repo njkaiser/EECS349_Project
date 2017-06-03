@@ -124,6 +124,11 @@ def interactive_plot():
     # GRAPHING FINAL TEST ACCURACY AS A FUNCTION OF EPOCH #
     #######################################################
     plt.plot(test_accuracies)
+    # ax.set_xlim([0, 500])
+    ax.set_ylim([0.0, 0.5])
+    plt.xlabel('Epoch Number')
+    plt.ylabel('Softmax Loss')
+    plt.show()
     plt.show()
 
 

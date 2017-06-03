@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from operator import itemgetter
 
 
 def postprocess():
@@ -48,6 +49,21 @@ def postprocess():
                 data[n] = {"config": config, "step": step, "loss": loss, "validation_accuracy": validation_accuracy, "test_accuracy": test_accuracy}
 
             count += 1 # increment line count
+
+    # loop through data and determine best runs
+    top_N = 10 # number of best runs we want to see
+    best_indices = []
+    averages = []
+    for n in data:
+        # print n
+        avg = sum(data[n]['validation_accuracy'][17:30])/(30.0-17.0)
+        averages.append([avg, n])
+    # sorted(averages, key=lambda x: x[0])
+    # print averages
+    # sorted(averages, key=itemgetter(0))
+    averages.sort(key=lambda x: x[0])
+    for a in averages:
+        print a
 
     # print "data:\n", data
     return data
