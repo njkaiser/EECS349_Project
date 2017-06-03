@@ -75,6 +75,7 @@ def interactive_plot():
         fig.canvas.draw()
 
     fig.canvas.mpl_connect('pick_event', onpick)
+    ax.set_ylim([0.85, 1.0])
     plt.show()
 
 
