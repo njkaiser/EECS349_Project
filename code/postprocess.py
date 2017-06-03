@@ -14,7 +14,7 @@ def postprocess():
             if line:
                 if line[0][0:13] == "model_config_":
                     n = int(line[0][13:])
-                    print n
+                    # print n
                     count = 0
                     config = []
 
@@ -41,9 +41,9 @@ def postprocess():
                     test_accuracy = float(line[0])
                 except ValueError:
                     test_accuracy = 0.0
+                # print test_accuracy
 
             elif count == 19:
-                print test_accuracy
                 # we're past all data for this run, now we store it
                 data[n] = {"config": config, "step": step, "loss": loss, "validation_accuracy": validation_accuracy, "test_accuracy": test_accuracy}
 
