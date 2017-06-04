@@ -114,8 +114,12 @@ def main():
             #     img.set_array(slices[iii])
             #     return [img]
             #
-            # animation.FuncAnimation(fig, updatefig, frames=range(num_slices), interval=1, blit=True, repeat=False)
+            # anim = animation.FuncAnimation(fig, updatefig, frames=range(num_slices), interval=1, blit=True, repeat=False)
             # fig.show()
+            #
+            # Writer = animation.writers['ffmpeg']
+            # writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+            # anim.save(str(uid)+'.mp4', writer=writer)
             ##### END ANIMATION
 
             ##### create POSITIVE samples:
