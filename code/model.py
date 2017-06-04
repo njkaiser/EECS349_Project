@@ -7,7 +7,7 @@ from collections import OrderedDict
 import shutil
 import time
 
-from config import WORKSPACE, LOG_DIR, MODEL_SAVE_DIR, IMAGE_SIZE, NUM_CLASSES, NUM_CHANNELS, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_ACTIV_FUNC, CONV1_STRIDE, CONV1_PADDING, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_ACTIV_FUNC, CONV2_STRIDE, CONV2_PADDING, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING, FC1_ACTIV_FUNC, FC1_NUM_NEURONS, LEARNING_RATE, NUM_ITERS, BATCH_SIZE, DROPOUT_RATE
+from config import WORKSPACE, LOG_DIR, MODEL_SAVE_DIR, IMAGE_SIZE, NUM_CLASSES, NUM_CHANNELS, CONV1_NUM_FILTERS, CONV1_KERNEL_SIZE, CONV1_ACTIV_FUNC, CONV1_STRIDE, CONV1_PADDING, POOL1_FILTER_SIZE, POOL1_STRIDE, POOL1_PADDING, CONV2_NUM_FILTERS, CONV2_KERNEL_SIZE, CONV2_ACTIV_FUNC, CONV2_STRIDE, CONV2_PADDING, POOL2_FILTER_SIZE, POOL2_STRIDE, POOL2_PADDING, FC1_ACTIV_FUNC, FC1_NUM_NEURONS, LEARNING_RATE, NUM_ITERS, BATCH_SIZE, DROPOUT_RATE, KEEP_PROB
 
 print "WORKSPACE:",WORKSPACE
 
@@ -423,7 +423,7 @@ def train_model(model_name, configuration, output_file):
         train_writer.close()
         validation_writer.close()
 
-def architecture_1(model_name, configuration, output_file):
+def architecture_2(model_name, configuration, output_file):
     with tf.Session() as sess:
         model_name = model_name
         model_dir = MODEL_SAVE_DIR + model_name + '/'
@@ -592,7 +592,7 @@ def architecture_1(model_name, configuration, output_file):
         train_writer.close()
         validation_writer.close()
 
-def architecture_2(model_name, configuration, output_file):
+def architecture_3(model_name, configuration, output_file):
     with tf.Session() as sess:
         model_name = model_name
         model_dir = MODEL_SAVE_DIR + model_name + '/'
