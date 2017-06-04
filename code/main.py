@@ -15,8 +15,8 @@ for c1ks in conv1_kernel_size:
                 for dr in dropout_rates:
                     config_list.append([c1ks, c2ks, c1nf, c2nf, dr])
 
-# for iteration in range(76,len(config_list)):
-#     config = config_list[iteration]
-#     model.train_model_loop(iteration, config, config_names)
+for iteration in range(63,len(config_list)):
+     config = config_list[iteration]
+     model.train_model_loop(iteration, config, config_names, "new_experiment_output.txt")
 
-model.train_model("test_model","basic_configuration","test.txt")
+# model.train_model("test_model","basic_configuration","test.txt")

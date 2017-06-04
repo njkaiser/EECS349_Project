@@ -52,7 +52,7 @@ def conv2d(x, W, stride, padding):
 def max_pool_2x2(x, ksize, stride, padding):
     return tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1], strides=[1, stride, stride, 1], padding=padding)
 
-def train_model_loop(iteration, config, config_names):
+def train_model_loop(iteration, config, config_names, output_file):
     with tf.Session() as sess:
         model_name = model_base_name + str(iteration)
         model_dir = MODEL_SAVE_DIR + model_name + '/'
@@ -65,6 +65,7 @@ def train_model_loop(iteration, config, config_names):
 
         print "PREPARING TO TRAIN:", model_name
         print "Current configuration is:", config
+	initialTime = datetime.now()
 
         # first convolutional layer
         W_conv1 = weight_variable([config[0][0], config[0][1], NUM_CHANNELS, config[2]], 'W_conv1')
@@ -112,13 +113,13 @@ def train_model_loop(iteration, config, config_names):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
         # setup to save accuracy and loss to logs
-        tf.summary.scalar("accuracy", accuracy)
-        tf.summary.scalar("cross_entropy", cross_entropy)
-        merged = tf.summary.merge_all()
-        train_writer = tf.summary.FileWriter(log_dir + 'train/', sess.graph)
-        validation_writer = tf.summary.FileWriter(log_dir + 'validation', sess.graph)
+        # tf.summary.scalar("accuracy", accuracy)
+        # tf.summary.scalar("cross_entropy", cross_entropy)
+        # merged = tf.summary.merge_all()
+        # train_writer = tf.summary.FileWriter(log_dir + 'train/', sess.graph)
+        # validation_writer = tf.summary.FileWriter(log_dir + 'validation', sess.graph)
 
-        saver = tf.train.Saver()
+        # saver = tf.train.Saver()
 
         sess.run(tf.global_variables_initializer())
 
@@ -126,24 +127,26 @@ def train_model_loop(iteration, config, config_names):
         loss_list = []
         val_acc_list = []
         k = 0
+	initialStepTime = datetime.now()
         for i in range(NUM_ITERS):
             j = 0
             while (j + BATCH_SIZE <= train_data.shape[0]):
                 batch = [train_data[j:j+BATCH_SIZE], train_labels[j:j+BATCH_SIZE]]
-                summary, _ = sess.run([merged, train_step], feed_dict={x: batch[0], y_: batch[1], keep_prob: 1-config[4]})
-                train_writer.add_summary(summary, k)
+                _ = sess.run([train_step], feed_dict={x: batch[0], y_: batch[1], keep_prob: 1-config[4]})
+                # train_writer.add_summary(summary, k)
                 j += BATCH_SIZE
                 k += 1
 
             if i % 10 == 0:
-                summary, loss, acc = sess.run([merged, cross_entropy, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})
-                validation_writer.add_summary(summary, k)
-                print("Step %d, validation accuracy %g"%(i, acc))
+                loss, acc = sess.run([cross_entropy, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})
+                # validation_writer.add_summary(summary, k)
+                print("Step %d, validation accuracy %g, step time %s"%(i, acc, str(datetime.now() - initialStepTime)))
+		initialStepTime = datetime.now()
                 step_list.append(i)
                 loss_list.append(loss)
                 val_acc_list.append(acc)
-                save_path = saver.save(sess, model_dir + model_name + ".ckpt")
-                print("Saved model %s at Step %d"%(model_name, i))
+                # save_path = saver.save(sess, model_dir + model_name + ".ckpt")
+                # print("Saved model %s at Step %d"%(model_name, i))
 
         acc, y_c = sess.run([accuracy, y_conv], feed_dict={x: test_data, y_: test_labels, keep_prob: 1.0})
 
@@ -195,9 +198,10 @@ def train_model_loop(iteration, config, config_names):
 
         # print("Final predictions",y_c)
         print("Final test accuracy for %s is %g"%(model_name, acc))
+	print("Time to train model %s is %s"%(model_name, str(datetime.now() - initialTime)))
 
-        save_path = saver.save(sess, model_dir + model_name + ".ckpt")
-        print("Saved final %s to path %s: "%(model_name, save_path))
+        # save_path = saver.save(sess, model_dir + model_name + ".ckpt")
+        # print("Saved final %s to path %s: "%(model_name, save_path))
 
         # print current lists of experiment values
         print "step_list:", step_list
@@ -208,7 +212,7 @@ def train_model_loop(iteration, config, config_names):
 
         # write experiment output to file -- flag 'a' for append
         config_dict = OrderedDict(zip(config_names, config))
-        with open("experiment_output.txt", 'a') as f:
+        with open(output_file, 'a') as f:
             f.write(model_name + '\n\n')
             f.write("experiment end time: " + str(datetime.now()) + '\n\n')
             f.write("configuration:\n")
@@ -226,8 +230,8 @@ def train_model_loop(iteration, config, config_names):
             f.write("--------------------")
             f.write("\n\n")
 
-        train_writer.close()
-        validation_writer.close()
+        # train_writer.close()
+        # validation_writer.close()
 
 def train_model(model_name, configuration, output_file):
     with tf.Session() as sess:
