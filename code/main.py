@@ -19,4 +19,4 @@ for c1ks in conv1_kernel_size:
 #      config = config_list[iteration]
 #      model.train_model_loop(iteration, config, config_names, "new_experiment_output.txt")
 
-model.train_model("28_new_architecture_1","2 conv, 2 pool","new_architectures.txt")
+model.architecture_5("28_new_architecture_6","3 straight conv, 1 pool","new_architectures.txt")
