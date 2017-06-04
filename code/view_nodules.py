@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+''' loops through image set and shows each cancer nodule '''
 
 import matplotlib.pyplot as plt
 import numpy as np
