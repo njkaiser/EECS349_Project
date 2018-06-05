@@ -163,7 +163,7 @@ FC1_ACTIV_FUNC = tf.nn.relu
 FLAGS = tf.app.flags.FLAGS
 tf.logging.set_verbosity(tf.logging.INFO)
 tf.app.flags.DEFINE_integer('batch_size', BATCH_SIZE, """number of images to process in a batch""")
-FLAGS.model_dir = MODEL_SAVE_DIR
+#FLAGS.model_dir = MODEL_SAVE_DIR
 
 
 if __name__ == '__main__':

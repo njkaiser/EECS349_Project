@@ -4,10 +4,14 @@
 #### *Project Members: Adam Pollack, Chainatee Tanakulrungson, Nate Kaiser*
 
 ### Instructions for Use:
-To use this package, finish this sentence.
+Install Tensorflow:
+`pip install tensorflow` or `pip install tensorflow-gpu`
+
+Run main.py from the base directory
+`python code/main.py`
 
 ### File descriptions:
-**config.py**:
+**config.py**: define the constants you wish to use with your model architecture in this file
 
 **convert_dcm_to_jpg.sh**: a short script for extracting and separating the image and metadata from DCM (medical image) files
 
@@ -15,13 +19,13 @@ To use this package, finish this sentence.
 
 **extract_dcm_metadata.sh**: a short shell script for extracting metadata from DCM (medical image) files
 
-**import_data.py**:
+**import_data.py**: convert the data from .png to lists in Python which can be used for training
 
 **interactive_plot.py**: creates two interactive plots of all experimental data (accuracy vs epoch & loss vs epoch)
 
-**main.py**:
+**main.py**: contains code to either iterate over a list of different configurations (defined at the top of the script) or call one of the model architectures in model.py directly (doing this will use the constants defined in config.py)
 
-**model.py**:
+**model.py**: defines various models which can be used by main.py. the train\_model\_loop function can be used to iterate over a list of model configurations as defined in main.py. the other functions (such as architecture\_6) define individual models which can be trained from main.py using the values defined in config.py 
 
 **postprocess.py**: extracts data from custom experiment output format for use by other scripts
 

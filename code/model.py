@@ -65,7 +65,7 @@ def train_model_loop(iteration, config, config_names, output_file):
 
         print "PREPARING TO TRAIN:", model_name
         print "Current configuration is:", config
-	initialTime = datetime.now()
+        initialTime = datetime.now()
 
         # first convolutional layer
         W_conv1 = weight_variable([config[0][0], config[0][1], NUM_CHANNELS, config[2]], 'W_conv1')
@@ -127,7 +127,7 @@ def train_model_loop(iteration, config, config_names, output_file):
         loss_list = []
         val_acc_list = []
         k = 0
-	initialStepTime = datetime.now()
+        initialStepTime = datetime.now()
         for i in range(NUM_ITERS):
             j = 0
             while (j + BATCH_SIZE <= train_data.shape[0]):
@@ -141,7 +141,7 @@ def train_model_loop(iteration, config, config_names, output_file):
                 loss, acc = sess.run([cross_entropy, accuracy], feed_dict={x: validation_data, y_: validation_labels, keep_prob: 1.0})
                 # validation_writer.add_summary(summary, k)
                 print("Step %d, validation accuracy %g, step time %s"%(i, acc, str(datetime.now() - initialStepTime)))
-		initialStepTime = datetime.now()
+                initialStepTime = datetime.now()
                 step_list.append(i)
                 loss_list.append(loss)
                 val_acc_list.append(acc)
@@ -198,7 +198,7 @@ def train_model_loop(iteration, config, config_names, output_file):
 
         # print("Final predictions",y_c)
         print("Final test accuracy for %s is %g"%(model_name, acc))
-	print("Time to train model %s is %s"%(model_name, str(datetime.now() - initialTime)))
+        print("Time to train model %s is %s"%(model_name, str(datetime.now() - initialTime)))
 
         # save_path = saver.save(sess, model_dir + model_name + ".ckpt")
         # print("Saved final %s to path %s: "%(model_name, save_path))
